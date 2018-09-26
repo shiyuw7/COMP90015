@@ -10,7 +10,7 @@ public class GameThread extends Thread {
 	private static GameThread instance;
 	private List<ClientConnection> clients;
 	private GameBoard gameBoard;
-	private ClientConnection currentPlayer;
+	private int currentPlayer;
 
 	private boolean status;
 
@@ -58,11 +58,38 @@ public class GameThread extends Thread {
 		this.gameBoard = gameBoard;
 	}
 
-	public ClientConnection getCurrentPlayer() {
+	public int getCurrentPlayer() {
 		return currentPlayer;
 	}
 
-	public void setCurrentPlayer(ClientConnection currentPlayer) {
+	public void setCurrentPlayer(int currentPlayer) {
 		this.currentPlayer = currentPlayer;
+	}
+
+	/**
+	 * Determine whether game is end or not
+	 */
+	public boolean isEnd() {
+		if (isLastPlayer() || gameBoard.boardFull()) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Determine whether the player is the last one or not
+	 */
+	public boolean isLastPlayer() {
+		if (clients.size() == 1) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Announce a winner
+	 */
+	public void announceWinner() {
+		clients.get(currentPlayer).write("You are win. Balabala");
 	}
 }

@@ -1,5 +1,8 @@
 package common;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GameBoard {
 
 	protected String[][] board;
@@ -27,6 +30,9 @@ public class GameBoard {
 		}
 	}
 
+	/**
+	 * Initialize the data in the board
+	 */
 	private void initializeBoard() {
 		for (int r = 0; r < this.ROWS; r++) {
 			for (int c = 0; c < this.COLUMNS; c++) {
@@ -47,6 +53,10 @@ public class GameBoard {
 		return round;
 	}
 
+	public String[][] getBoard() {
+		return this.board;
+	}
+
 	public String getValue(int row, int col) {
 		if (this.inRange(row, col)) {
 			return this.board[row][col];
@@ -54,39 +64,52 @@ public class GameBoard {
 		return "";
 	}
 
-	public String[] getWord(int row, int col) {
-		String[] values = new String[2];
-		StringBuilder wordInRow = new StringBuilder();
-		StringBuilder wordInCol = new StringBuilder();
-		// Calculate start row and column
-		int startRow = row - 1;
-		int startCol = col - 1;
-		while (startRow >= 0 && isNotEmpty(startRow, col)) {
-			startRow--;
-		}
-		startRow++;
-		while (startCol >= 0 && isNotEmpty(row, startCol)) {
-			startCol--;
-		}
-		startCol++;
-		// Make words
-		while (startRow < this.ROWS && isNotEmpty(startRow, col)) {
-			wordInRow.append(this.board[startRow][col]);
+	/**
+	 * Get all the word which can be made.
+	 * 
+	 * @return In first round (round = 1), return only one letter. In other round
+	 *         (round > 1), return words that are more than one letter.
+	 */
+	public List<String> getWord(int row, int col) {
+		List<String> words = new ArrayList<>();
+		if (round == 1) {
+			words.add(this.board[row][col]);
+		} else {
+			StringBuilder wordInRow = new StringBuilder();
+			StringBuilder wordInCol = new StringBuilder();
+			// Calculate start row and column
+			int startRow = row - 1;
+			int startCol = col - 1;
+			while (startRow >= 0 && isNotEmpty(startRow, col)) {
+				startRow--;
+			}
 			startRow++;
-		}
-		while (startCol < this.COLUMNS && isNotEmpty(row, startCol)) {
-			wordInCol.append(this.board[row][startCol]);
+			while (startCol >= 0 && isNotEmpty(row, startCol)) {
+				startCol--;
+			}
 			startCol++;
+			// Make words
+			while (startRow < this.ROWS && isNotEmpty(startRow, col)) {
+				wordInRow.append(this.board[startRow][col]);
+				startRow++;
+			}
+			while (startCol < this.COLUMNS && isNotEmpty(row, startCol)) {
+				wordInCol.append(this.board[row][startCol]);
+				startCol++;
+			}
+			if (wordInRow.length() > 1) {
+				words.add(wordInRow.toString());
+			}
+			if (wordInCol.length() > 1) {
+				words.add(wordInCol.toString());
+			}
 		}
-		values[0] = wordInRow.toString();
-		values[1] = wordInCol.toString();
-		return values;
+		return words;
 	}
 
-	public String[][] getBoard() {
-		return this.board;
-	}
-
+	/**
+	 * Determine whether the board is full or not
+	 */
 	public boolean boardFull() {
 		for (int r = 0; r < this.ROWS; r++) {
 			for (int c = 0; c < this.COLUMNS; c++) {
@@ -97,8 +120,13 @@ public class GameBoard {
 		return true;
 	}
 
+	/**
+	 * Determine whether the move made is success or not
+	 * 
+	 * @return Return false if not touch any other letter except first round
+	 */
 	public boolean makeMove(int row, int col, String value) {
-		if (this.isSlotAvailable(row, col)) {
+		if (this.isTileAvailable(row, col)) {
 			if (this.round != 0 && !this.isTouch(row, col)) {
 				return false;
 			}
@@ -109,31 +137,52 @@ public class GameBoard {
 		return false;
 	}
 
-	public boolean isSlotAvailable(int row, int col) {
+	/**
+	 * Determine whether the tile is available or not (In range and Is empty)
+	 */
+	public boolean isTileAvailable(int row, int col) {
 		return (this.inRange(row, col) && isEmpty(row, col));
 	}
 
+	/**
+	 * Determine whether the tile is empty or not
+	 */
 	private boolean isEmpty(int row, int col) {
 		return this.board[row][col].equals("");
 	}
 
+	/**
+	 * Determine whether the tile is empty or not
+	 */
 	private boolean isNotEmpty(int row, int col) {
 		return !this.board[row][col].equals("");
 	}
 
+	/**
+	 * Determine whether the tile is in the range of board or not
+	 */
 	private boolean inRange(int row, int col) {
 		return row >= 0 && col >= 0 && row <= this.ROWS && col <= this.COLUMNS;
 	}
 
+	/**
+	 * Determine whether the tile is on the edge or not
+	 */
 	private boolean onEdge(int row, int col) {
 		return row == 0 || col == 0 || row == this.ROWS - 1 || col == this.COLUMNS - 1;
 	}
 
+	/**
+	 * Determine whether the tile is in the corner or not
+	 */
 	private boolean inCorner(int row, int col) {
 		return (row == 0 && col == 0) || (row == this.ROWS - 1 && col == this.COLUMNS - 1)
 				|| (row == 0 && col == this.COLUMNS - 1) || (row == this.ROWS - 1 && col == 0);
 	}
 
+	/**
+	 * Determine whether the tile touch any other letter
+	 */
 	private boolean isTouch(int row, int col) {
 		if (onEdge(row, col)) {
 			// On edge

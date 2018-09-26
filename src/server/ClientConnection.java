@@ -88,17 +88,6 @@ public class ClientConnection extends Thread {
 		}
 	}
 
-	public void write(String msg) {
-		try {
-			writer.write(msg + "\n");
-			writer.flush();
-			System.out.println(
-					Thread.currentThread().getName() + " - Message sent to client " + clientNum);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 	public String getClientName() {
 		return clientName;
 	}
@@ -122,5 +111,19 @@ public class ClientConnection extends Thread {
 
 	public void setClientCount(int clientCount) {
 		this.clientCount = clientCount;
+	}
+	
+	/**
+	 * Write message to client from server
+	 */
+	public void write(String msg) {
+		try {
+			writer.write(msg + "\n");
+			writer.flush();
+			System.out.println(
+					Thread.currentThread().getName() + " - Message sent to client " + clientNum);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

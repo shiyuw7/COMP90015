@@ -15,8 +15,7 @@ public class ClientConnection {
 	private BufferedReader reader;
 	private BufferedWriter writer;
 
-	private ClientConnection() {
-	}
+	private ClientConnection() {}
 
 	public static ClientConnection getInstance() {
 		if (instance == null) {
@@ -39,21 +38,6 @@ public class ClientConnection {
 		}
 	}
 
-	public boolean sendMsg(String msg) {
-		if (writer != null && client.isConnected()) {
-			try {
-				// send msg to server
-				writer.write(msg + "\n");
-				writer.flush();
-				return true;
-			} catch (Exception e) {
-				e.printStackTrace();
-				return false;
-			}
-		}
-		return false;
-	}
-
 	public Socket getClient() {
 		return client;
 	}
@@ -64,5 +48,22 @@ public class ClientConnection {
 
 	public BufferedWriter getWriter() {
 		return writer;
+	}
+	
+	/**
+	 * Write message to server from client
+	 */
+	public boolean sendMsg(String msg) {
+		if (writer != null && client.isConnected()) {
+			try {
+				writer.write(msg + "\n");
+				writer.flush();
+				return true;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+		return false;
 	}
 }

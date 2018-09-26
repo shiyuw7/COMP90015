@@ -17,4 +17,5 @@ public class Constants {
 
 	// Data type
 	public final static String USERNAME = "username";
+	// ...
 }

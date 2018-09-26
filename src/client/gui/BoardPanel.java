@@ -80,7 +80,7 @@ public class BoardPanel extends JPanel {
 		FontRenderContext fContext = g2d.getFontRenderContext();
 		for (int row = 0; row < gameBoard.getROWS(); row++) {
 			for (int column = 0; column < gameBoard.getCOLUMNS(); column++) {
-				if (!gameBoard.isSlotAvailable(row, column)) {
+				if (!gameBoard.isTileAvailable(row, column)) {
 					int textWidth = (int) font
 							.getStringBounds(gameBoard.getValue(row, column), fContext).getWidth();
 					int textHeight = (int) font
@@ -108,14 +108,6 @@ public class BoardPanel extends JPanel {
 		return true;
 	}
 
-	public class ButtonActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			JButton jButton = ((JButton) e.getSource());
-			jButton.setVisible(messageFromActionListener(jButton.getText()));
-		}
-	}
-
 	public class ComboBoxActionListener implements ActionListener {
 		@SuppressWarnings("unchecked")
 		@Override
@@ -139,5 +131,12 @@ public class BoardPanel extends JPanel {
 			}
 		}
 	}
-
+	
+	public class ButtonActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JButton jButton = ((JButton) e.getSource());
+			jButton.setVisible(messageFromActionListener(jButton.getText()));
+		}
+	}
 }

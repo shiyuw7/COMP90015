@@ -2,9 +2,11 @@ package client.gui;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.WindowConstants;
 
 @SuppressWarnings("serial")
@@ -56,10 +58,14 @@ public class MainFrame extends JFrame {
 		repaint();
 	}
 
-	public void generateButton(String[] words) {
+	public void generateButton(List<String> words) {
+		gamePanel.getComboBox().setEnabled(false);
 		for (String word : words) {
 			JButton jButton = new JButton(word);
-			gamePanel.getButtonPanel().add(jButton);
+			jButton.addActionListener(gamePanel.new ButtonActionListener());
+			gamePanel.getConfirmPanel().add(jButton);
+			JLabel jLabel = new JLabel("Score: " + word.length());
+			gamePanel.getConfirmPanel().add(jLabel);
 		}
 		revalidate();
 		repaint();

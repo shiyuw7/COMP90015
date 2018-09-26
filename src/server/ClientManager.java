@@ -18,31 +18,41 @@ public class ClientManager {
 		return instance;
 	}
 
+	public synchronized List<ClientConnection> getConnectedClients() {
+		return connectedClients;
+	}
+	
+	/**
+	 * A client is connected to server
+	 */
 	public synchronized void clientConnected(ClientConnection clientConnection) {
 		// do something (broadcast)
 		connectedClients.add(clientConnection);
 	}
 
+	/**
+	 * A client is disconnected to server
+	 */
 	public synchronized void clientDisconnected(ClientConnection clientConnection) {
 		// do something (broadcast)
 		connectedClients.remove(clientConnection);
 	}
 
+	/**
+	 * Broadcast the client message to the given clients
+	 */
 	public synchronized void broadcast(String msg, List<ClientConnection> clients) {
-		// Broadcast the client message to all the clients connected to the server
 		for (ClientConnection clientConnection : clients) {
 			clientConnection.write(msg);
 		}
 	}
 
+	/**
+	 * Broadcast the client message to all the clients connected to the server
+	 */
 	public synchronized void broadcastToAll(String msg) {
-		// Broadcast the client message to all the clients connected to the server
 		for (ClientConnection clientConnection : connectedClients) {
 			clientConnection.write(msg);
 		}
-	}
-
-	public synchronized List<ClientConnection> getConnectedClients() {
-		return connectedClients;
 	}
 }
