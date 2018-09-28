@@ -18,15 +18,10 @@ public class ClientManager {
 		return instance;
 	}
 
-	public synchronized List<ClientConnection> getConnectedClients() {
-		return connectedClients;
-	}
-	
 	/**
 	 * A client is connected to server
 	 */
 	public synchronized void clientConnected(ClientConnection clientConnection) {
-		// do something (broadcast)
 		connectedClients.add(clientConnection);
 	}
 
@@ -34,7 +29,9 @@ public class ClientManager {
 	 * A client is disconnected to server
 	 */
 	public synchronized void clientDisconnected(ClientConnection clientConnection) {
-		// do something (broadcast)
+		if (GameManager.getInstance().getPlayers().contains(clientConnection)) {
+			GameManager.getInstance().playerRemoved(clientConnection);
+		}
 		connectedClients.remove(clientConnection);
 	}
 
@@ -54,5 +51,9 @@ public class ClientManager {
 		for (ClientConnection clientConnection : connectedClients) {
 			clientConnection.write(msg);
 		}
+	}
+
+	public synchronized List<ClientConnection> getConnectedClients() {
+		return connectedClients;
 	}
 }

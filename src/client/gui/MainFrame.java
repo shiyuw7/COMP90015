@@ -29,7 +29,7 @@ public class MainFrame extends JFrame {
 	}
 
 	/**
-	 * Initialize the contents of the frame.
+	 * Initialize the contents of the frame
 	 */
 	private void initialize() {
 		this.setTitle("Scrabble");
@@ -42,6 +42,9 @@ public class MainFrame extends JFrame {
 		add(loginPanel);
 	}
 
+	/**
+	 * From login to lobby
+	 */
 	public void login() {
 		remove(loginPanel);
 		lobbyPanel = new LobbyPanel();
@@ -50,6 +53,9 @@ public class MainFrame extends JFrame {
 		repaint();
 	}
 
+	/**
+	 * From lobby to game
+	 */
 	public void startGame() {
 		remove(lobbyPanel);
 		gamePanel = new GamePanel();
@@ -58,16 +64,32 @@ public class MainFrame extends JFrame {
 		repaint();
 	}
 
+	/**
+	 * Every time player place a character, confirm button will be generated
+	 */
 	public void generateButton(List<String> words) {
 		gamePanel.getComboBox().setEnabled(false);
+		gamePanel.getPassButton().setEnabled(false);
 		for (String word : words) {
 			JButton jButton = new JButton(word);
-			jButton.addActionListener(gamePanel.new ButtonActionListener());
+			jButton.addActionListener(gamePanel.new ConfirmButtonActionListener());
 			gamePanel.getConfirmPanel().add(jButton);
 			JLabel jLabel = new JLabel("Score: " + word.length());
 			gamePanel.getConfirmPanel().add(jLabel);
 		}
 		revalidate();
 		repaint();
+	}
+
+	public LoginPanel getLoginPanel() {
+		return loginPanel;
+	}
+
+	public LobbyPanel getLobbyPanel() {
+		return lobbyPanel;
+	}
+
+	public GamePanel getGamePanel() {
+		return gamePanel;
 	}
 }

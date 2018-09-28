@@ -12,7 +12,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import common.Constants;
-import common.JsonUtil;
 
 public class ClientConnection extends Thread {
 
@@ -45,7 +44,6 @@ public class ClientConnection extends Thread {
 
 	@Override
 	public void run() {
-		JsonUtil jsonUtil = new JsonUtil();
 		try {
 			System.out.println(Thread.currentThread().getName()
 					+ " - Reading messages from client's " + clientNum + " connection");
@@ -55,19 +53,23 @@ public class ClientConnection extends Thread {
 				// Logical processing based on request type
 				JSONObject msg = new JSONObject(clientMsg);
 				String type = msg.getString(Constants.TYPE);
+				JSONObject data = (JSONObject) msg.get(Constants.DATA);
+				// Different request type
 				switch (type) {
 				case Constants.LOGIN:
-					// Sample 1 : not use Util
-					JSONObject sample1 = (JSONObject) msg.get(Constants.DATA);
-					// Sample 2 : use Util
-					JSONObject sample2 = jsonUtil.getData(clientMsg);
-					
-					// Set name
-					this.setClientName(sample1.getString(Constants.USERNAME));
-					// do something
+					this.setClientName(data.getString(Constants.USER_NAME));
+					GameManager.getInstance().playerAdded(this);
 					break;
-				case Constants.STARTGAME:
-					// do something
+				case Constants.START_GAME:
+					GameManager.getInstance().start();
+					break;
+				case Constants.PLACE_CHARACTER:
+					GameManager.getInstance().placeCharacter(data.getInt(Constants.PLACE_ROW),
+							data.getInt(Constants.PLACE_COLUMN),
+							data.getString(Constants.PLACE_VALUE), clientName);
+					break;
+				case Constants.PASS:
+					GameManager.getInstance().pass();
 					break;
 				}
 			}
@@ -112,7 +114,7 @@ public class ClientConnection extends Thread {
 	public void setClientCount(int clientCount) {
 		this.clientCount = clientCount;
 	}
-	
+
 	/**
 	 * Write message to client from server
 	 */

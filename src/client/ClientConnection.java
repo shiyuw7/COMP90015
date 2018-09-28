@@ -15,7 +15,11 @@ public class ClientConnection {
 	private BufferedReader reader;
 	private BufferedWriter writer;
 
-	private ClientConnection() {}
+	private String username;
+
+	private ClientConnection() {
+		username = "someone";
+	}
 
 	public static ClientConnection getInstance() {
 		if (instance == null) {
@@ -49,7 +53,15 @@ public class ClientConnection {
 	public BufferedWriter getWriter() {
 		return writer;
 	}
-	
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
 	/**
 	 * Write message to server from client
 	 */

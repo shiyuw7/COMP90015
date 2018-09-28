@@ -7,6 +7,12 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import org.json.JSONObject;
+
+import client.ClientConnection;
+import common.Constants;
+import common.JsonUtil;
+
 @SuppressWarnings("serial")
 public class LobbyPanel extends JPanel {
 
@@ -31,8 +37,11 @@ public class LobbyPanel extends JPanel {
 		startButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// do something
-				MainFrame.getInstance().startGame();
+				//broadcast Game Start to other players
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put(Constants.USER_NAME, ClientConnection.getInstance().getUsername());
+				jsonObject = JsonUtil.parse(Constants.START_GAME, jsonObject);
+				ClientConnection.getInstance().sendMsg(jsonObject.toString());
 			}
 		});
 	}

@@ -11,7 +11,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputAdapter;
@@ -32,7 +31,7 @@ public class BoardPanel extends JPanel {
 
 	public BoardPanel() {
 		this.setPreferredSize(new Dimension(600, 600));
-		this.gameBoard = new GameBoard(20, 20);
+		this.gameBoard = new GameBoard();
 		this.addMouseListener(new GamePanelMouseAdapter());
 		this.width = 0;
 		this.height = 0;
@@ -99,8 +98,11 @@ public class BoardPanel extends JPanel {
 		}
 	}
 
-	public boolean messageFromActionListener(String value) {
-		if (gameBoard.makeMove(currentRow, currentColumn, value)) {
+	/**
+	 * Place a character into tile based on selected value in JComboBox
+	 */
+	public boolean placeCharacter(String value) {
+		if (gameBoard.placeCharacter(currentRow, currentColumn, value)) {
 			repaint();
 			MainFrame.getInstance().generateButton(gameBoard.getWord(currentRow, currentColumn));
 			return false;
@@ -113,7 +115,7 @@ public class BoardPanel extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JComboBox<String> jComboBox = (JComboBox<String>) e.getSource();
-			if (messageFromActionListener((String) jComboBox.getSelectedItem())) {
+			if (placeCharacter((String) jComboBox.getSelectedItem())) {
 				showMessageDialog(null, "Tile invalid");
 			}
 		}
@@ -131,12 +133,38 @@ public class BoardPanel extends JPanel {
 			}
 		}
 	}
-	
-	public class ButtonActionListener implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			JButton jButton = ((JButton) e.getSource());
-			jButton.setVisible(messageFromActionListener(jButton.getText()));
-		}
+
+	/**
+	 * Get value from current tile
+	 */
+	public String getCurrentValue() {
+		return gameBoard.getValue(currentRow, currentColumn);
+	}
+
+	/**
+	 * Get value from a specific tile
+	 */
+	public String getValue(int row, int col) {
+		return gameBoard.getValue(row, col);
+	}
+
+	/**
+	 * Set value to a specific tile
+	 */
+	public void setValue(int row, int col, String value) {
+		gameBoard.setValue(row, col, value);
+		repaint();
+	}
+
+	public GameBoard getGameBoard() {
+		return gameBoard;
+	}
+
+	public int getCurrentColumn() {
+		return currentColumn;
+	}
+
+	public int getCurrentRow() {
+		return currentRow;
 	}
 }

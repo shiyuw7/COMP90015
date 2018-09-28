@@ -9,6 +9,14 @@ public class GameBoard {
 	private final int ROWS;
 	private final int COLUMNS;
 	private int round;
+	
+	public GameBoard() {
+		this.ROWS = 20;
+		this.COLUMNS = 20;
+		this.round = 0;
+		this.board = new String[ROWS][COLUMNS];
+		initializeBoard();
+	}
 
 	public GameBoard(int rows, int columns) {
 		this.ROWS = rows;
@@ -64,11 +72,16 @@ public class GameBoard {
 		return "";
 	}
 
+	public void setValue(int row, int col, String value) {
+		this.board[row][col] = value;
+		round++;
+	}
+
 	/**
 	 * Get all the word which can be made.
 	 * 
-	 * @return In first round (round = 1), return only one letter. In other round
-	 *         (round > 1), return words that are more than one letter.
+	 * @return In first round (round = 1), return only one character. In other round
+	 *         (round > 1), return words that are more than one character.
 	 */
 	public List<String> getWord(int row, int col) {
 		List<String> words = new ArrayList<>();
@@ -121,11 +134,11 @@ public class GameBoard {
 	}
 
 	/**
-	 * Determine whether the move made is success or not
+	 * Determine whether the operation is success or not
 	 * 
-	 * @return Return false if not touch any other letter except first round
+	 * @return Return false if not touch any other character except first round
 	 */
-	public boolean makeMove(int row, int col, String value) {
+	public boolean placeCharacter(int row, int col, String value) {
 		if (this.isTileAvailable(row, col)) {
 			if (this.round != 0 && !this.isTouch(row, col)) {
 				return false;
@@ -181,7 +194,7 @@ public class GameBoard {
 	}
 
 	/**
-	 * Determine whether the tile touch any other letter
+	 * Determine whether the tile touch any other character
 	 */
 	private boolean isTouch(int row, int col) {
 		if (onEdge(row, col)) {
