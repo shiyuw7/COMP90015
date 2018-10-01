@@ -1,9 +1,7 @@
 package client;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
@@ -12,13 +10,11 @@ public class ClientConnection {
 
 	private static ClientConnection instance;
 	private Socket client;
-	private BufferedReader reader;
 	private BufferedWriter writer;
 
-	private String username;
+	private String userName;
 
 	private ClientConnection() {
-		username = "someone";
 	}
 
 	public static ClientConnection getInstance() {
@@ -31,8 +27,6 @@ public class ClientConnection {
 	public void clientConnected(Socket client) {
 		try {
 			this.client = client;
-			this.reader = new BufferedReader(
-					new InputStreamReader(client.getInputStream(), "UTF-8"));
 			this.writer = new BufferedWriter(
 					new OutputStreamWriter(client.getOutputStream(), "UTF-8"));
 		} catch (UnsupportedEncodingException e) {
@@ -46,24 +40,20 @@ public class ClientConnection {
 		return client;
 	}
 
-	public BufferedReader getReader() {
-		return reader;
-	}
-
 	public BufferedWriter getWriter() {
 		return writer;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getUserName() {
+		return userName;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 	/**
-	 * Write message to server from client
+	 * Write message to server
 	 */
 	public boolean sendMsg(String msg) {
 		if (writer != null && client.isConnected()) {

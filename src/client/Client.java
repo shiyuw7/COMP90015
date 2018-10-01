@@ -39,8 +39,11 @@ public class Client {
 			client = new Socket();
 			client.connect(new InetSocketAddress(ip, port), 10000);
 			ClientConnection.getInstance().clientConnected(client);
+			// Start new thread to listen message from server
+			ServerListener serverListener = new ServerListener(client);
+			serverListener.start();
+			// Open UI
 			MainFrame.getInstance().setVisible(true);
-
 		} catch (UnknownHostException e) {
 			System.out.println("Unknown host: " + ip);
 			System.exit(0);

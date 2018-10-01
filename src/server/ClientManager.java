@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClientManager {
+
 	private static ClientManager instance;
 	private List<ClientConnection> connectedClients;
 
@@ -29,8 +30,14 @@ public class ClientManager {
 	 * A client is disconnected to server
 	 */
 	public synchronized void clientDisconnected(ClientConnection clientConnection) {
-		if (GameManager.getInstance().getPlayers().contains(clientConnection)) {
-			GameManager.getInstance().playerRemoved(clientConnection);
+		int status = clientConnection.getClientStatus();
+		if (status == 1) {
+			LobbyManager.getInstance().clientDisconnected(clientConnection);
+		} else if (status == 2) {
+			LobbyManager.getInstance().clientDisconnected(clientConnection);
+			RoomManager.getInstance().clientDisconnected(clientConnection);
+		} else if (status == 3) {
+			GameManager.getInstance().clientDisconnected(clientConnection);
 		}
 		connectedClients.remove(clientConnection);
 	}

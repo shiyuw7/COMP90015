@@ -30,7 +30,8 @@ public class BoardPanel extends JPanel {
 	private int currentRow;
 
 	public BoardPanel() {
-		this.setPreferredSize(new Dimension(600, 600));
+		this.setPreferredSize(new Dimension(MainFrame.getInstance().getHeight() - 40,
+				MainFrame.getInstance().getHeight() - 40));
 		this.gameBoard = new GameBoard();
 		this.addMouseListener(new GamePanelMouseAdapter());
 		this.width = 0;
@@ -41,7 +42,8 @@ public class BoardPanel extends JPanel {
 	}
 
 	public BoardPanel(GameBoard gameBoard) {
-		this.setPreferredSize(new Dimension(600, 600));
+		this.setPreferredSize(new Dimension(MainFrame.getInstance().getHeight() - 40,
+				MainFrame.getInstance().getHeight() - 40));
 		this.gameBoard = gameBoard;
 		this.addMouseListener(new GamePanelMouseAdapter());
 		this.width = 0;

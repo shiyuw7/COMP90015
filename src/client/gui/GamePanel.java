@@ -2,7 +2,6 @@ package client.gui;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -36,9 +35,7 @@ public class GamePanel extends JPanel {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-
-		setPreferredSize(new Dimension(800, 640));
-		setLayout(new GridBagLayout());
+		setPreferredSize(MainFrame.getInstance().getPreferredSize());
 		GridBagConstraints c = new GridBagConstraints();
 
 		// Board Panel
@@ -51,55 +48,43 @@ public class GamePanel extends JPanel {
 		c.gridheight = 6;
 		add(boardPanel, c);
 
+		int width = MainFrame.getInstance().getWidth();
+		int height = MainFrame.getInstance().getHeight();
 		// Combo box
 		comboBox = new JComboBox<>(Constants.CHARACTERS);
-		comboBox.setPreferredSize(new Dimension(85, 80));
+		comboBox.setPreferredSize(new Dimension(width / 10, height / 8));
 		comboBox.setSelectedItem(null);
 		comboBox.addActionListener(boardPanel.new ComboBoxActionListener());
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.anchor = GridBagConstraints.CENTER;
-		c.gridx = 6;
-		c.gridy = 0;
-		c.gridwidth = 1;
-		c.gridheight = 2;
-		add(comboBox, c);
-
 		// Pass Button
 		passButton = new JButton(Constants.PASS);
 		passButton.addActionListener(new PassButtonActionListener());
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.anchor = GridBagConstraints.CENTER;
-		c.gridx = 7;
-		c.gridy = 0;
-		c.gridwidth = 1;
-		c.gridheight = 2;
-		add(passButton, c);
-
 		// Confirm Panel
 		confirmPanel = new JPanel();
-		confirmPanel.setPreferredSize(new Dimension(150, 250));
+		confirmPanel.setPreferredSize(new Dimension(width / 5, height / 3));
 		confirmPanel.setBorder(new CompoundBorder(new TitledBorder("Confirm Window"),
-				new EmptyBorder(40, 50, 40, 50)));
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.anchor = GridBagConstraints.CENTER;
-		c.gridx = 6;
-		c.gridy = 2;
-		c.gridwidth = 2;
-		c.gridheight = 2;
-		add(confirmPanel, c);
-
+				new EmptyBorder(8, 10, 8, 10)));
 		// Vote Panel
 		votePanel = new JPanel();
-		votePanel.setPreferredSize(new Dimension(150, 250));
+		votePanel.setPreferredSize(new Dimension(width / 5, height / 3));
 		votePanel.setBorder(new CompoundBorder(new TitledBorder("Vote Window"),
-				new EmptyBorder(40, 50, 40, 50)));
+				new EmptyBorder(8, 10, 8, 10)));
+
+		JPanel jPanel = new JPanel();
+		jPanel.setPreferredSize(new Dimension(
+				MainFrame.getInstance().getWidth() - MainFrame.getInstance().getHeight(),
+				MainFrame.getInstance().getHeight() - 40));
+		jPanel.add(comboBox);
+		jPanel.add(passButton);
+		jPanel.add(confirmPanel);
+		jPanel.add(votePanel);
+
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.anchor = GridBagConstraints.CENTER;
 		c.gridx = 6;
-		c.gridy = 4;
+		c.gridy = 0;
 		c.gridwidth = 2;
-		c.gridheight = 2;
-		add(votePanel, c);
+		c.gridheight = 6;
+		add(jPanel, c);
 	}
 
 	/**

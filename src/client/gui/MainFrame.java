@@ -9,6 +9,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.WindowConstants;
 
+import common.Constants;
+
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
 
@@ -33,7 +35,7 @@ public class MainFrame extends JFrame {
 	 */
 	private void initialize() {
 		this.setTitle("Scrabble");
-		this.setSize(800, 640);
+		this.setSize(Constants.WIDTH, Constants.HEIGHT);
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation((int) ((screenSize.getWidth() - this.getWidth()) / 2),

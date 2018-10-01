@@ -13,7 +13,7 @@ public class GameManager {
 
 	private static GameManager instance;
 	private GameBoard gameBoard;
-	private List<ClientConnection> players;
+	private List<ClientConnection> connectedClients;
 	private int currentPlayer;
 	private int passCount;
 
@@ -21,7 +21,7 @@ public class GameManager {
 
 	private GameManager() {
 		gameBoard = new GameBoard();
-		players = new ArrayList<>();
+		connectedClients = new ArrayList<>();
 		currentPlayer = 0;
 		passCount = 0;
 		status = false;
@@ -35,28 +35,52 @@ public class GameManager {
 	}
 
 	/**
-	 * A player is added to game
+	 * A client is connected to game
 	 */
-	public synchronized void playerAdded(ClientConnection clientConnection) {
-		players.add(clientConnection);
+	public synchronized void clientConnected(ClientConnection clientConnection) {
+		connectedClients.add(clientConnection);
 	}
 
 	/**
-	 * A player is removed from game
+	 * A client is disconnected from game
 	 */
-	public synchronized void playerRemoved(ClientConnection clientConnection) {
-		players.remove(clientConnection);
+	public synchronized void clientDisconnected(ClientConnection clientConnection) {
+		connectedClients.remove(clientConnection);
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put(Constants.USER_NAME, clientConnection.getClientName());
+		jsonObject = JsonUtil.parse(Constants.REMOVE_USER_FROM_LOBBY, jsonObject);
+		broadcastToAll(jsonObject.toString());
 		if (isEnd()) {
 			announceWinner();
 		}
 	}
 
 	/**
-	 * Broadcast the player message to all players
+	 * Broadcast the message to one client
+	 */
+	public synchronized void broadcastToOne(String msg, String username) {
+		for (ClientConnection clientConnection : connectedClients) {
+			if (clientConnection.getClientName().equals(username)) {
+				clientConnection.write(msg);
+			}
+		}
+	}
+
+	/**
+	 * Broadcast the message to the given clients
+	 */
+	public synchronized void broadcastToList(String msg, List<ClientConnection> clients) {
+		for (ClientConnection clientConnection : clients) {
+			clientConnection.write(msg);
+		}
+	}
+
+	/**
+	 * Broadcast the message to all the clients
 	 */
 	public synchronized void broadcastToAll(String msg) {
-		for (ClientConnection player : players) {
-			player.write(msg);
+		for (ClientConnection clientConnection : connectedClients) {
+			clientConnection.write(msg);
 		}
 	}
 
@@ -67,8 +91,8 @@ public class GameManager {
 		status = true;
 		// Random sort Player List
 		// ...
-		for (int i = 0; i < players.size(); i++) {
-			ClientConnection player = players.get(i);
+		for (int i = 0; i < connectedClients.size(); i++) {
+			ClientConnection player = connectedClients.get(i);
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put(Constants.USER_NAME, player.getClientName());
 			// First player's round
@@ -91,13 +115,13 @@ public class GameManager {
 			announceWinner();
 		}
 		currentPlayer++;
-		if (currentPlayer >= players.size()) {
+		if (currentPlayer >= connectedClients.size()) {
 			currentPlayer = 0;
 		}
 		gameBoard.setValue(row, column, value);
 		// broadcast the character placed by player
-		for (int i = 0; i < players.size(); i++) {
-			ClientConnection player = players.get(i);
+		for (int i = 0; i < connectedClients.size(); i++) {
+			ClientConnection player = connectedClients.get(i);
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put(Constants.PLACE_ROW, row);
 			jsonObject.put(Constants.PLACE_COLUMN, column);
@@ -124,20 +148,20 @@ public class GameManager {
 			announceWinner();
 		}
 		currentPlayer++;
-		if (currentPlayer >= players.size()) {
+		if (currentPlayer >= connectedClients.size()) {
 			currentPlayer = 0;
 		}
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put(Constants.IS_YOUR_ROUND, true);
 		jsonObject = JsonUtil.parse(Constants.PASS, jsonObject);
-		players.get(currentPlayer).write(jsonObject.toString());
+		connectedClients.get(currentPlayer).write(jsonObject.toString());
 	}
 
 	/**
 	 * Determine whether game is end or not
 	 */
 	public boolean isEnd() {
-		if (isLastPlayer() || (passCount == players.size()) || gameBoard.boardFull()) {
+		if (isLastPlayer() || (passCount == connectedClients.size()) || gameBoard.boardFull()) {
 			return true;
 		}
 		return false;
@@ -147,7 +171,7 @@ public class GameManager {
 	 * Determine whether the player is the last one or not
 	 */
 	public boolean isLastPlayer() {
-		if (players.size() <= 1) {
+		if (connectedClients.size() <= 1) {
 			return true;
 		}
 		return false;
@@ -158,19 +182,23 @@ public class GameManager {
 	 */
 	public void announceWinner() {
 		status = false;
-		if (players.size() == 0) {
+		if (connectedClients.size() == 0) {
 			System.out.println("No player");
-		} else if (players.size() == 1) {
-			System.out.println(players.get(0).getClientName() + " win");
+		} else if (connectedClients.size() == 1) {
+			System.out.println(connectedClients.get(0).getClientName() + " win");
 			// players.get(0).write("");
 		} else {
-			System.out.println(players.get(currentPlayer).getClientName() + " win");
+			System.out.println(connectedClients.get(currentPlayer).getClientName() + " win");
 			// players.get(currentPlayer).write("");
 		}
 	}
 
 	public boolean getStatus() {
 		return status;
+	}
+
+	public void setStatus(boolean status) {
+		this.status = status;
 	}
 
 	public GameBoard getGameBoard() {
@@ -182,6 +210,6 @@ public class GameManager {
 	}
 
 	public synchronized List<ClientConnection> getPlayers() {
-		return players;
+		return connectedClients;
 	}
 }

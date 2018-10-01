@@ -12,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import common.Constants;
+import common.JsonUtil;
 
 public class ClientConnection extends Thread {
 
@@ -24,8 +25,8 @@ public class ClientConnection extends Thread {
 	private String clientMsg;
 	// Unique identification
 	private String clientName;
-	// Whether in a game or not
-	private boolean status;
+	// 1. inLobby; 2. inRoom; 3. inGame
+	private int clientStatus;
 	// Current Count
 	private int clientCount;
 
@@ -54,14 +55,99 @@ public class ClientConnection extends Thread {
 				JSONObject msg = new JSONObject(clientMsg);
 				String type = msg.getString(Constants.TYPE);
 				JSONObject data = (JSONObject) msg.get(Constants.DATA);
+				// Used for return message
+				JSONObject jsonObject = new JSONObject();
 				// Different request type
 				switch (type) {
 				case Constants.LOGIN:
-					this.setClientName(data.getString(Constants.USER_NAME));
-					GameManager.getInstance().playerAdded(this);
+					String userName = data.getString(Constants.USER_NAME);
+					if (LobbyManager.getInstance().isUnique(userName)) {
+						clientName = userName;
+						clientStatus = 1;
+						// Broadcast to other
+						jsonObject.put(Constants.USER_NAME, clientName);
+						jsonObject = JsonUtil.parse(Constants.ADD_USER_TO_LOBBY, jsonObject);
+						LobbyManager.getInstance().broadcastToAll(jsonObject.toString());
+						LobbyManager.getInstance().clientConnected(this);
+						// Return all info of other clients to this client
+						jsonObject = new JSONObject();
+						jsonObject.put(Constants.IS_UNIQUE, true);
+						jsonObject.put(Constants.LOBBY_LIST,
+								LobbyManager.getInstance().getConnectedClientsArray());
+						jsonObject.put(Constants.ROOM_LIST,
+								RoomManager.getInstance().getConnectedClientsArray());
+						jsonObject = JsonUtil.parse(Constants.LOGIN, jsonObject);
+						write(jsonObject.toString());
+					} else {
+						jsonObject.put(Constants.IS_UNIQUE, false);
+						jsonObject = JsonUtil.parse(Constants.LOGIN, jsonObject);
+						write(jsonObject.toString());
+					}
+					break;
+				case Constants.REFRESH:
+					jsonObject.put(Constants.LOBBY_LIST,
+							LobbyManager.getInstance().getConnectedClientsArray());
+					jsonObject.put(Constants.ROOM_LIST,
+							RoomManager.getInstance().getConnectedClientsArray());
+					jsonObject = JsonUtil.parse(Constants.REFRESH, jsonObject);
+					write(jsonObject.toString());
+					break;
+				case Constants.ADD_USER_TO_ROOM:
+					clientStatus = 2;
+					RoomManager.getInstance().clientConnected(this);
+					// Broadcast to other
+					jsonObject.put(Constants.USER_NAME, clientName);
+					jsonObject = JsonUtil.parse(Constants.ADD_USER_TO_ROOM, jsonObject);
+					LobbyManager.getInstance().broadcastToAll(jsonObject.toString());
+					break;
+				case Constants.REMOVE_USER_FROM_ROOM:
+					clientStatus = 1;
+					RoomManager.getInstance().clientDisconnected(this);
+					// Broadcast to other
+					jsonObject.put(Constants.USER_NAME, clientName);
+					jsonObject = JsonUtil.parse(Constants.ADD_USER_TO_LOBBY, jsonObject);
+					LobbyManager.getInstance().broadcastToAll(jsonObject.toString());
+					break;
+				case Constants.INVITE:
+					LobbyManager.getInstance().invite(clientName,
+							data.getString(Constants.USER_NAME));
+					break;
+				case Constants.INVITE_REPLY:
+					jsonObject.put(Constants.USER_NAME, clientName);
+					if (data.getBoolean(Constants.IS_ACCEPTED)) {
+						// Accepted
+						clientStatus = 2;
+						RoomManager.getInstance().clientConnected(this);
+						// Broadcast to other
+						jsonObject = JsonUtil.parse(Constants.ADD_USER_TO_ROOM, jsonObject);
+						LobbyManager.getInstance().broadcastToAll(jsonObject.toString());
+					} else {
+						// Not Accepted
+						jsonObject.put(Constants.IS_ACCEPTED, false);
+						jsonObject = JsonUtil.parse(Constants.INVITE_REPLY, jsonObject);
+						LobbyManager.getInstance().broadcastToOne(jsonObject.toString(),
+								data.getString(Constants.USER_NAME));
+					}
 					break;
 				case Constants.START_GAME:
-					GameManager.getInstance().start();
+					if (GameManager.getInstance().getStatus()) {
+						// if game has started
+					} else {
+						GameManager.getInstance().setStatus(true);
+						for (ClientConnection clientConnection : RoomManager.getInstance()
+								.getConnectedClients()) {
+							clientConnection.setClientStatus(3);
+							GameManager.getInstance().clientConnected(clientConnection);
+						}
+						// notify
+						jsonObject = new JSONObject();
+						jsonObject = JsonUtil.parse(Constants.CLEAR_ROOM, jsonObject);
+						LobbyManager.getInstance()
+								.clearRoom(RoomManager.getInstance().getConnectedClients());
+						LobbyManager.getInstance().broadcastToAll(jsonObject.toString());
+						RoomManager.getInstance().clearRoom();
+						GameManager.getInstance().start();
+					}
 					break;
 				case Constants.PLACE_CHARACTER:
 					GameManager.getInstance().placeCharacter(data.getInt(Constants.PLACE_ROW),
@@ -94,25 +180,16 @@ public class ClientConnection extends Thread {
 		return clientName;
 	}
 
-	private void setClientName(String clientName) {
-		// check name, keep unique
-		this.clientName = clientName;
+	public int getClientStatus() {
+		return clientStatus;
 	}
 
-	public boolean getStatus() {
-		return status;
-	}
-
-	public void setStatus(boolean status) {
-		this.status = status;
+	public void setClientStatus(int clientStatus) {
+		this.clientStatus = clientStatus;
 	}
 
 	public int getClientCount() {
 		return clientCount;
-	}
-
-	public void setClientCount(int clientCount) {
-		this.clientCount = clientCount;
 	}
 
 	/**
