@@ -165,6 +165,7 @@ public class ClientConnection extends Thread {
 					GameManager.getInstance().pass();
 					break;
 				case Constants.LOGOUT:
+					clientStatus = 0;
 					GameManager.getInstance().clientDisconnected(this);
 					break;
 				}

@@ -54,7 +54,28 @@ public class GameManager {
 	 * A client is disconnected from game
 	 */
 	public synchronized void clientDisconnected(ClientConnection clientConnection) {
-		connectedClients.remove(clientConnection);
+		if (clientConnection == connectedClients.get(currentPlayer)) {
+			connectedClients.remove(clientConnection);
+			// Next player
+			if (currentPlayer >= connectedClients.size()) {
+				currentPlayer = 0;
+			}
+			for (int i = 0; i < connectedClients.size(); i++) {
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put(Constants.NEXT_USER_NAME,
+						connectedClients.get(currentPlayer).getClientName());
+				if (i == currentPlayer) {
+					jsonObject.put(Constants.IS_YOUR_ROUND, true);
+				} else {
+					jsonObject.put(Constants.IS_YOUR_ROUND, false);
+				}
+				jsonObject = JsonUtil.parse(Constants.PASS, jsonObject);
+				connectedClients.get(i).write(jsonObject.toString());
+			}
+		} else {
+			connectedClients.remove(clientConnection);
+		}
+		// Broadcast Remove user
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put(Constants.USER_NAME, clientConnection.getClientName());
 		jsonObject = JsonUtil.parse(Constants.REMOVE_USER_FROM_GAME, jsonObject);
@@ -149,7 +170,12 @@ public class GameManager {
 			jsonObject.put(Constants.CHOSEN_WORD, word);
 			jsonObject.put(Constants.USER_NAME, currentPlayerName);
 			jsonObject = JsonUtil.parse(Constants.VOTE, jsonObject);
-			broadcastToAll(jsonObject.toString());
+			for (int i = 0; i < connectedClients.size(); i++) {
+				if (i != currentPlayer) {
+					ClientConnection clientConnection = connectedClients.get(i);
+					clientConnection.write(jsonObject.toString());
+				}
+			}
 		}
 	}
 
@@ -161,7 +187,7 @@ public class GameManager {
 			agreeCount++;
 		}
 		voteCount++;
-		if (voteCount == connectedClients.size()) {
+		if (voteCount == connectedClients.size() - 1) {
 			if (agreeCount == voteCount) {
 				connectedClients.get(currentPlayer).count(word.length());
 				int currentCount = connectedClients.get(currentPlayer).getClientCount();
@@ -321,6 +347,9 @@ public class GameManager {
 	 * Clear
 	 */
 	private void clearGameStatus() {
+		for (ClientConnection clientConnection : connectedClients) {
+			clientConnection.setClientStatus(0);
+		}
 		gameBoard = new GameBoard();
 		connectedClients = new ArrayList<>();
 		currentPlayer = 0;
