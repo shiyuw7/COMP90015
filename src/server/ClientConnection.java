@@ -177,8 +177,7 @@ public class ClientConnection extends Thread {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		} catch (SocketException e) {
-			// System.out.println( Thread.currentThread().getName() + " - Client " +
-			// clientNum + " disconnected");
+			ClientManager.getInstance().clientDisconnected(this);
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();

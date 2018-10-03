@@ -124,9 +124,9 @@ public class GamePanel extends JPanel {
 			// Send the status of every round to server
 			JButton jButton = ((JButton) e.getSource());
 			JSONObject jsonObject = new JSONObject();
-			jsonObject.put(Constants.PLACE_ROW, boardPanel.getCurrentRow());
-			jsonObject.put(Constants.PLACE_COLUMN, boardPanel.getCurrentColumn());
-			jsonObject.put(Constants.PLACE_VALUE, boardPanel.getCurrentValue());
+			jsonObject.put(Constants.PLACE_ROW, boardPanel.getPreviousRow());
+			jsonObject.put(Constants.PLACE_COLUMN, boardPanel.getPreviousColumn());
+			jsonObject.put(Constants.PLACE_VALUE, boardPanel.getPreviousValue());
 			jsonObject.put(Constants.CHOSEN_WORD, jButton.getText());
 			// Here should change to vote
 			jsonObject = JsonUtil.parse(Constants.VOTE, jsonObject);

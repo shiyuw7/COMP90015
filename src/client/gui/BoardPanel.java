@@ -29,6 +29,10 @@ public class BoardPanel extends JPanel {
 	private int currentColumn;
 	private int currentRow;
 
+	private int previousColumn;
+	private int previousRow;
+	private String previousValue;
+
 	public BoardPanel() {
 		this.setPreferredSize(new Dimension(MainFrame.getInstance().getHeight() - 40,
 				MainFrame.getInstance().getHeight() - 40));
@@ -105,6 +109,9 @@ public class BoardPanel extends JPanel {
 	 */
 	public boolean placeCharacter(String value) {
 		if (gameBoard.placeCharacter(currentRow, currentColumn, value)) {
+			this.previousColumn = currentColumn;
+			this.previousRow = currentRow;
+			this.previousValue = value;
 			repaint();
 			MainFrame.getInstance().generateButton(gameBoard.getWord(currentRow, currentColumn));
 			return false;
@@ -116,7 +123,7 @@ public class BoardPanel extends JPanel {
 	 * Clear current character
 	 */
 	public void clearCharacter() {
-		gameBoard.clearValue(currentRow, currentColumn);
+		gameBoard.clearValue(previousRow, previousColumn);
 		repaint();
 	}
 
@@ -176,5 +183,17 @@ public class BoardPanel extends JPanel {
 
 	public int getCurrentRow() {
 		return currentRow;
+	}
+
+	public String getPreviousValue() {
+		return previousValue;
+	}
+
+	public int getPreviousColumn() {
+		return previousColumn;
+	}
+
+	public int getPreviousRow() {
+		return previousRow;
 	}
 }
