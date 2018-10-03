@@ -1,5 +1,6 @@
 package client.gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -46,14 +47,21 @@ public class LobbyPanel extends JPanel {
 		JButton leaveButton = new JButton("Leave Room");
 		JButton inviteButton = new JButton("Invite");
 		JButton refreshButton = new JButton("Refresh");
-		JLabel yourName = new JLabel("Your name: " + ClientConnection.getInstance().getUserName());
 
 		lobbyList = new JList<>();
 		roomList = new JList<>();
 		lobbyScroll = new JScrollPane(lobbyList);
 		lobbyScroll.setPreferredSize(new Dimension(400, 200));
+		JPanel lobbyScrollHeader = new JPanel();
+		lobbyScrollHeader.add(new JLabel("Lobby List"));
+		lobbyScrollHeader.setBackground(Color.GRAY);
+		lobbyScroll.setColumnHeaderView(lobbyScrollHeader);
 		roomScroll = new JScrollPane(roomList);
 		roomScroll.setPreferredSize(new Dimension(400, 200));
+		JPanel roomScrollHeader = new JPanel();
+		roomScrollHeader.add(new JLabel("Room List"));
+		roomScrollHeader.setBackground(Color.GRAY);
+		roomScroll.setColumnHeaderView(roomScrollHeader);
 
 		// Add component
 		add(startButton);
@@ -61,7 +69,6 @@ public class LobbyPanel extends JPanel {
 		add(leaveButton);
 		add(inviteButton);
 		add(refreshButton);
-		add(yourName);
 
 		add(lobbyScroll);
 		add(roomScroll);
@@ -71,9 +78,9 @@ public class LobbyPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (!roomListModel.contains(ClientConnection.getInstance().getUserName())) {
-					showMessageDialog(null, "You are not in the room");
+					showMessageDialog(MainFrame.getInstance(), "You are not in the room");
 				} else if (roomListModel.size() < 2) {
-					showMessageDialog(null, "Users in the room should larger than 1");
+					showMessageDialog(MainFrame.getInstance(), "Users in the room should larger than 1");
 				} else {
 					// broadcast Game Start to other players
 					JSONObject jsonObject = new JSONObject();
@@ -89,7 +96,7 @@ public class LobbyPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (roomListModel.contains(ClientConnection.getInstance().getUserName())) {
-					showMessageDialog(null, "You are already in the room");
+					showMessageDialog(MainFrame.getInstance(), "You are already in the room");
 				} else {
 					JSONObject jsonObject = new JSONObject();
 					jsonObject.put(Constants.USER_NAME,
@@ -110,7 +117,7 @@ public class LobbyPanel extends JPanel {
 					jsonObject = JsonUtil.parse(Constants.REMOVE_USER_FROM_ROOM, jsonObject);
 					ClientConnection.getInstance().sendMsg(jsonObject.toString());
 				} else {
-					showMessageDialog(null, "You are not in the room");
+					showMessageDialog(MainFrame.getInstance(), "You are not in the room");
 				}
 			}
 		});
@@ -119,9 +126,9 @@ public class LobbyPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (lobbyList.getSelectedIndex() < 0) {
-					showMessageDialog(null, "Please select a user");
+					showMessageDialog(MainFrame.getInstance(), "Please select a user");
 				} else if (!roomListModel.contains(ClientConnection.getInstance().getUserName())) {
-					showMessageDialog(null, "You are not in the room");
+					showMessageDialog(MainFrame.getInstance(), "You are not in the room");
 				} else {
 					JSONObject jsonObject = new JSONObject();
 					jsonObject.put(Constants.USER_NAME, lobbyList.getSelectedValue());
@@ -216,7 +223,7 @@ public class LobbyPanel extends JPanel {
 	 */
 	public void inviteConfirmation(String inviter) {
 		int dialogButton = JOptionPane.YES_NO_OPTION;
-		int dialogResult = JOptionPane.showConfirmDialog(null,
+		int dialogResult = JOptionPane.showConfirmDialog(MainFrame.getInstance(),
 				inviter + " invite you to join room?", "Invitation", dialogButton);
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put(Constants.USER_NAME, inviter);
@@ -233,6 +240,13 @@ public class LobbyPanel extends JPanel {
 	 * Pop up a window that show a refuse message
 	 */
 	public void inviteRefused(String invitee) {
-		showMessageDialog(null, invitee + " refused your invitation");
+		showMessageDialog(MainFrame.getInstance(), invitee + " refused your invitation");
+	}
+
+	/**
+	 * Pop up a window that show a reply message
+	 */
+	public void gameStarted() {
+		showMessageDialog(MainFrame.getInstance(), "Game has already started");
 	}
 }

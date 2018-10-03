@@ -7,11 +7,17 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import client.ClientConnection;
@@ -22,10 +28,15 @@ import common.JsonUtil;
 public class GamePanel extends JPanel {
 
 	private BoardPanel boardPanel;
+	private JLabel currentPlayerLabel;
 	private JComboBox<String> comboBox;
 	private JButton passButton;
 	private JPanel confirmPanel;
-	private JPanel votePanel;
+	private JButton logoutButton;
+
+	private DefaultTableModel countTableModel;
+	private JTable countTable;
+	private JScrollPane scrollPane;
 
 	public GamePanel() {
 		initialize();
@@ -50,9 +61,11 @@ public class GamePanel extends JPanel {
 
 		int width = MainFrame.getInstance().getWidth();
 		int height = MainFrame.getInstance().getHeight();
+		// Current player
+		currentPlayerLabel = new JLabel();
 		// Combo box
 		comboBox = new JComboBox<>(Constants.CHARACTERS);
-		comboBox.setPreferredSize(new Dimension(width / 10, height / 8));
+		comboBox.setPreferredSize(new Dimension(width / 11, height / 8));
 		comboBox.setSelectedItem(null);
 		comboBox.addActionListener(boardPanel.new ComboBoxActionListener());
 		// Pass Button
@@ -60,23 +73,34 @@ public class GamePanel extends JPanel {
 		passButton.addActionListener(new PassButtonActionListener());
 		// Confirm Panel
 		confirmPanel = new JPanel();
-		confirmPanel.setPreferredSize(new Dimension(width / 5, height / 3));
+		confirmPanel.setPreferredSize(new Dimension(width / 5, height / 4));
 		confirmPanel.setBorder(new CompoundBorder(new TitledBorder("Confirm Window"),
-				new EmptyBorder(8, 10, 8, 10)));
-		// Vote Panel
-		votePanel = new JPanel();
-		votePanel.setPreferredSize(new Dimension(width / 5, height / 3));
-		votePanel.setBorder(new CompoundBorder(new TitledBorder("Vote Window"),
-				new EmptyBorder(8, 10, 8, 10)));
+				new EmptyBorder(2, 3, 2, 3)));
+		// Count Table
+		countTableModel = new DefaultTableModel() {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				// all cells false
+				return false;
+			}
+		};
+		countTable = new JTable(countTableModel);
+		scrollPane = new JScrollPane(countTable);
+		scrollPane.setPreferredSize(new Dimension(width / 5, height / 3));
+		// Logout Button
+		logoutButton = new JButton("Log Out");
+		logoutButton.addActionListener(new LogoutButtonActionListener());
 
 		JPanel jPanel = new JPanel();
 		jPanel.setPreferredSize(new Dimension(
 				MainFrame.getInstance().getWidth() - MainFrame.getInstance().getHeight(),
 				MainFrame.getInstance().getHeight() - 40));
+		jPanel.add(currentPlayerLabel);
 		jPanel.add(comboBox);
 		jPanel.add(passButton);
 		jPanel.add(confirmPanel);
-		jPanel.add(votePanel);
+		jPanel.add(scrollPane);
+		jPanel.add(logoutButton);
 
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.anchor = GridBagConstraints.CENTER;
@@ -105,9 +129,97 @@ public class GamePanel extends JPanel {
 			jsonObject.put(Constants.PLACE_VALUE, boardPanel.getCurrentValue());
 			jsonObject.put(Constants.CHOSEN_WORD, jButton.getText());
 			// Here should change to vote
-			jsonObject = JsonUtil.parse(Constants.PLACE_CHARACTER, jsonObject);
+			jsonObject = JsonUtil.parse(Constants.VOTE, jsonObject);
 			ClientConnection.getInstance().sendMsg(jsonObject.toString());
 		}
+	}
+
+	/**
+	 * Every time player cancel their choose
+	 */
+	public class CancelButtonActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			boardPanel.clearCharacter();
+			comboBox.setEnabled(true);
+			passButton.setEnabled(true);
+			// Remove all confirm buttons
+			confirmPanel.removeAll();
+			revalidate();
+			repaint();
+		}
+	}
+
+	/**
+	 * Every time player logout
+	 */
+	public class LogoutButtonActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			MainFrame.getInstance().logout();
+			JSONObject jsonObject = new JSONObject();
+			jsonObject = JsonUtil.parse(Constants.LOGOUT, jsonObject);
+			ClientConnection.getInstance().sendMsg(jsonObject.toString());
+		}
+	}
+
+	/**
+	 * Initialize Count Table
+	 */
+	public void initializeCountTable(JSONArray data) {
+		String[] usernames = JsonUtil.jsonArrayToStringArray(data, Constants.USER_NAME);
+		String[] counts = JsonUtil.jsonArrayToIntArray(data, Constants.USER_COUNT);
+		countTableModel.addColumn("Players", usernames);
+		countTableModel.addColumn("Count", counts);
+	}
+
+	/**
+	 * Update Count Table
+	 */
+	public void updateCountTable(String username, int usercount) {
+		for (int i = 0; i < countTableModel.getRowCount(); i++) {
+			if (countTableModel.getValueAt(i, 0).equals(username)) {
+				countTableModel.setValueAt(usercount + "", i, 1);
+			}
+		}
+	}
+
+	/**
+	 * Remove player from Count Table
+	 */
+	public void removePlayerFromTable(String username) {
+		for (int i = 0; i < countTableModel.getRowCount(); i++) {
+			if (countTableModel.getValueAt(i, 0).equals(username)) {
+				countTableModel.removeRow(i);
+			}
+		}
+	}
+
+	/**
+	 * Generate vote button
+	 */
+	public void generateVoteDialog(JSONObject data) {
+		// Highlight
+
+		String[] options = new String[2];
+		options[0] = new String("Agree");
+		options[1] = new String("Disagree");
+		// time out
+		int dialogResult = JOptionPane.showOptionDialog(MainFrame.getInstance(),
+				data.getString(Constants.USER_NAME) + "'s chosen: "
+						+ data.getString(Constants.CHOSEN_WORD),
+				"Invitation", 0, JOptionPane.INFORMATION_MESSAGE, null, options, null);
+		// time out
+		JSONObject jsonObject = new JSONObject();
+		if (dialogResult == 0) {
+			jsonObject.put(Constants.IS_WORD, true);
+		} else {
+			jsonObject.put(Constants.IS_WORD, false);
+		}
+		jsonObject = JsonUtil.parse(Constants.VOTE_REPLY, jsonObject);
+		ClientConnection.getInstance().sendMsg(jsonObject.toString());
+
+		// Cancel Highlight
 	}
 
 	/**
@@ -139,5 +251,13 @@ public class GamePanel extends JPanel {
 
 	public JButton getPassButton() {
 		return passButton;
+	}
+
+	public JTable getCountTable() {
+		return countTable;
+	}
+
+	public void setCurrentPlayer(String currentPlayer) {
+		this.currentPlayerLabel.setText("Current player: " + currentPlayer);
 	}
 }

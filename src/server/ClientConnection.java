@@ -132,15 +132,18 @@ public class ClientConnection extends Thread {
 				case Constants.START_GAME:
 					if (GameManager.getInstance().getStatus()) {
 						// if game has started
+						jsonObject.put(Constants.IS_STARTED, true);
+						jsonObject = JsonUtil.parse(Constants.REPLY_START_GAME, jsonObject);
+						write(jsonObject.toString());
 					} else {
 						GameManager.getInstance().setStatus(true);
 						for (ClientConnection clientConnection : RoomManager.getInstance()
 								.getConnectedClients()) {
 							clientConnection.setClientStatus(3);
+							clientConnection.setClientCount(0);
 							GameManager.getInstance().clientConnected(clientConnection);
 						}
 						// notify
-						jsonObject = new JSONObject();
 						jsonObject = JsonUtil.parse(Constants.CLEAR_ROOM, jsonObject);
 						LobbyManager.getInstance()
 								.clearRoom(RoomManager.getInstance().getConnectedClients());
@@ -149,13 +152,20 @@ public class ClientConnection extends Thread {
 						GameManager.getInstance().start();
 					}
 					break;
-				case Constants.PLACE_CHARACTER:
-					GameManager.getInstance().placeCharacter(data.getInt(Constants.PLACE_ROW),
+				case Constants.VOTE:
+					GameManager.getInstance().vote(data.getInt(Constants.PLACE_ROW),
 							data.getInt(Constants.PLACE_COLUMN),
-							data.getString(Constants.PLACE_VALUE), clientName);
+							data.getString(Constants.PLACE_VALUE),
+							data.getString(Constants.CHOSEN_WORD), clientName);
+					break;
+				case Constants.VOTE_REPLY:
+					GameManager.getInstance().voteReply(data.getBoolean(Constants.IS_WORD));
 					break;
 				case Constants.PASS:
 					GameManager.getInstance().pass();
+					break;
+				case Constants.LOGOUT:
+					GameManager.getInstance().clientDisconnected(this);
 					break;
 				}
 			}
@@ -190,6 +200,14 @@ public class ClientConnection extends Thread {
 
 	public int getClientCount() {
 		return clientCount;
+	}
+
+	public void setClientCount(int clientCount) {
+		this.clientCount = clientCount;
+	}
+
+	public void count(int count) {
+		this.clientCount = this.clientCount + count;
 	}
 
 	/**

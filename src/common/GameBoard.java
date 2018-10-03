@@ -9,7 +9,7 @@ public class GameBoard {
 	private final int ROWS;
 	private final int COLUMNS;
 	private int round;
-	
+
 	public GameBoard() {
 		this.ROWS = 20;
 		this.COLUMNS = 20;
@@ -77,6 +77,11 @@ public class GameBoard {
 		round++;
 	}
 
+	public void clearValue(int row, int col) {
+		this.board[row][col] = "";
+		round--;
+	}
+
 	/**
 	 * Get all the word which can be made.
 	 * 
@@ -85,7 +90,8 @@ public class GameBoard {
 	 */
 	public List<String> getWord(int row, int col) {
 		List<String> words = new ArrayList<>();
-		if (round == 1) {
+//		if (round == 1) {
+		if (!this.isTouch(row, col)) {
 			words.add(this.board[row][col]);
 		} else {
 			StringBuilder wordInRow = new StringBuilder();
@@ -140,9 +146,9 @@ public class GameBoard {
 	 */
 	public boolean placeCharacter(int row, int col, String value) {
 		if (this.isTileAvailable(row, col)) {
-			if (this.round != 0 && !this.isTouch(row, col)) {
-				return false;
-			}
+			// if (this.round != 0 && !this.isTouch(row, col)) {
+			// return false;
+			// }
 			this.board[row][col] = value;
 			this.round++;
 			return true;

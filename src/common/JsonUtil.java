@@ -107,4 +107,12 @@ public class JsonUtil {
 		}
 		return stringArray;
 	}
+
+	public static String[] jsonArrayToIntArray(JSONArray jsonArray, String dataType) {
+		String[] stringArray = new String[jsonArray.length()];
+		for (int i = 0; i < jsonArray.length(); i++) {
+			stringArray[i] = jsonArray.getJSONObject(i).getInt(dataType) + "";
+		}
+		return stringArray;
+	}
 }

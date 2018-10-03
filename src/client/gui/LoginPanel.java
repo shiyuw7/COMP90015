@@ -53,7 +53,7 @@ public class LoginPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				String username = userNameField.getText();
 				if (username.equals("")) {
-					showMessageDialog(null, "Username cannot null");
+					showMessageDialog(MainFrame.getInstance(), "Username cannot null");
 				} else if (isValidUsername(username)) {
 					ClientConnection.getInstance().setUserName(username);
 					JSONObject jsonObject = new JSONObject();
@@ -61,7 +61,7 @@ public class LoginPanel extends JPanel {
 					jsonObject = JsonUtil.parse(Constants.LOGIN, jsonObject);
 					ClientConnection.getInstance().sendMsg(jsonObject.toString());
 				} else {
-					showMessageDialog(null, "Username invalid");
+					showMessageDialog(MainFrame.getInstance(), "Username invalid");
 				}
 			}
 		});
@@ -84,6 +84,6 @@ public class LoginPanel extends JPanel {
 	 */
 	public void clear() {
 		userNameField.setText("");
-		showMessageDialog(null, "Login Failed: Username is already being used");
+		showMessageDialog(MainFrame.getInstance(), "Login Failed: Username is already being used");
 	}
 }

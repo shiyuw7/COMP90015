@@ -112,13 +112,21 @@ public class BoardPanel extends JPanel {
 		return true;
 	}
 
+	/**
+	 * Clear current character
+	 */
+	public void clearCharacter() {
+		gameBoard.clearValue(currentRow, currentColumn);
+		repaint();
+	}
+
 	public class ComboBoxActionListener implements ActionListener {
 		@SuppressWarnings("unchecked")
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JComboBox<String> jComboBox = (JComboBox<String>) e.getSource();
 			if (placeCharacter((String) jComboBox.getSelectedItem())) {
-				showMessageDialog(null, "Tile invalid");
+				showMessageDialog(MainFrame.getInstance(), "Tile invalid");
 			}
 		}
 	}

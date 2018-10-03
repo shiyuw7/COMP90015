@@ -7,8 +7,13 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import client.ClientConnection;
 import common.Constants;
 
 @SuppressWarnings("serial")
@@ -49,6 +54,7 @@ public class MainFrame extends JFrame {
 	 */
 	public void login() {
 		remove(loginPanel);
+		setTitle("Scrabble (Your Name: " + ClientConnection.getInstance().getUserName() + ")");
 		lobbyPanel = new LobbyPanel();
 		add(lobbyPanel);
 		revalidate();
@@ -65,6 +71,46 @@ public class MainFrame extends JFrame {
 		revalidate();
 		repaint();
 	}
+	
+	/**
+	 * From game to login
+	 */
+	public void logout() {
+		remove(gamePanel);
+		add(loginPanel);
+		revalidate();
+		repaint();
+	}
+
+	/**
+	 * From game to login
+	 */
+	public void gameOver(boolean isTie, String winner, JSONArray countList) {
+		String msg;
+		if (isTie) {
+			msg = "The game ended in a draw";
+		} else {
+			msg = "Winner: " + winner;
+		}
+		for (int i = 0; i < countList.length(); i++) {
+			JSONObject jsonObject = countList.getJSONObject(i);
+			msg = msg + "\n" + jsonObject.getString(Constants.USER_NAME) + " Count: "
+					+ jsonObject.getInt(Constants.USER_COUNT);
+		}
+		JOptionPane.showMessageDialog(this, msg, "Game Over", JOptionPane.INFORMATION_MESSAGE);
+		remove(gamePanel);
+		add(loginPanel);
+		revalidate();
+		repaint();
+	}
+
+	/**
+	 * show vote reply
+	 */
+	public void showVoteReply() {
+		JOptionPane.showMessageDialog(this, "Someone disagree your chosen", "Vote Reply",
+				JOptionPane.INFORMATION_MESSAGE);
+	}
 
 	/**
 	 * Every time player place a character, confirm button will be generated
@@ -79,6 +125,9 @@ public class MainFrame extends JFrame {
 			JLabel jLabel = new JLabel("Score: " + word.length());
 			gamePanel.getConfirmPanel().add(jLabel);
 		}
+		JButton jButton = new JButton("Cancel");
+		jButton.addActionListener(gamePanel.new CancelButtonActionListener());
+		gamePanel.getConfirmPanel().add(jButton);
 		revalidate();
 		repaint();
 	}

@@ -70,6 +70,12 @@ public class ServerListener extends Thread {
 						MainFrame.getInstance().getLobbyPanel()
 								.removeFromRoomList(data.getString(Constants.USER_NAME));
 						break;
+					case Constants.ADD_USER_TO_GAME:
+						// Join a game
+						break;
+					case Constants.REMOVE_USER_FROM_GAME:
+						gamePanel.removePlayerFromTable(data.getString(Constants.USER_NAME));
+						break;
 					case Constants.REFRESH:
 						refreshLobby(data);
 						break;
@@ -81,22 +87,43 @@ public class ServerListener extends Thread {
 						MainFrame.getInstance().getLobbyPanel()
 								.inviteRefused(data.getString(Constants.USER_NAME));
 						break;
+					case Constants.REPLY_START_GAME:
+						if (data.getBoolean(Constants.IS_STARTED)) {
+							MainFrame.getInstance().getLobbyPanel().gameStarted();
+						}
+						break;
 					case Constants.START_GAME:
 						MainFrame.getInstance().startGame();
 						gamePanel = MainFrame.getInstance().getGamePanel();
-						if (!JsonUtil.getBooleanDataByType(serverMsg, Constants.IS_YOUR_ROUND)) {
+						gamePanel.initializeCountTable(data.getJSONArray(Constants.COUNT_LIST));
+						if (!data.getBoolean(Constants.IS_YOUR_ROUND)) {
 							gamePanel.getComboBox().setEnabled(false);
 							gamePanel.getPassButton().setEnabled(false);
 						}
+						gamePanel.setCurrentPlayer(data.getString(Constants.NEXT_USER_NAME));
 						break;
 					case Constants.CLEAR_ROOM:
 						MainFrame.getInstance().getLobbyPanel().clearRoom();
+						break;
+					case Constants.VOTE:
+						gamePanel.generateVoteDialog(data);
+						break;
+					case Constants.VOTE_REPLY:
+						if (!data.getBoolean(Constants.IS_WORD)) {
+							gamePanel.getBoardPanel().clearCharacter();
+							gamePanel.revalidate();
+							gamePanel.repaint();
+							MainFrame.getInstance().showVoteReply();
+						}
 						break;
 					case Constants.PLACE_CHARACTER:
 						gamePanel.getBoardPanel().setValue(data.getInt(Constants.PLACE_ROW),
 								data.getInt(Constants.PLACE_COLUMN),
 								data.getString(Constants.PLACE_VALUE));
-						if (JsonUtil.getBooleanDataByType(serverMsg, Constants.IS_YOUR_ROUND)) {
+						gamePanel.updateCountTable(data.getString(Constants.USER_NAME),
+								data.getInt(Constants.USER_COUNT));
+						gamePanel.setCurrentPlayer(data.getString(Constants.NEXT_USER_NAME));
+						if (data.getBoolean(Constants.IS_YOUR_ROUND)) {
 							gamePanel.getComboBox().setEnabled(true);
 							gamePanel.getPassButton().setEnabled(true);
 						} else {
@@ -105,13 +132,19 @@ public class ServerListener extends Thread {
 						}
 						break;
 					case Constants.PASS:
-						if (JsonUtil.getBooleanDataByType(serverMsg, Constants.IS_YOUR_ROUND)) {
+						if (data.getBoolean(Constants.IS_YOUR_ROUND)) {
 							gamePanel.getComboBox().setEnabled(true);
 							gamePanel.getPassButton().setEnabled(true);
 						} else {
 							gamePanel.getComboBox().setEnabled(false);
 							gamePanel.getPassButton().setEnabled(false);
 						}
+						gamePanel.setCurrentPlayer(data.getString(Constants.NEXT_USER_NAME));
+						break;
+					case Constants.GAME_OVER:
+						MainFrame.getInstance().gameOver(data.getBoolean(Constants.IS_TIE),
+								data.getString(Constants.WINNER),
+								data.getJSONArray(Constants.COUNT_LIST));
 						break;
 					}
 				}
