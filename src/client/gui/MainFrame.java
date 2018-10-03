@@ -119,9 +119,9 @@ public class MainFrame extends JFrame {
 	/**
 	 * show vote reply
 	 */
-	public void showVoteReply() {
-		JOptionPane.showMessageDialog(this, "Someone disagree your chosen", "Vote Reply",
-				JOptionPane.INFORMATION_MESSAGE);
+	public void showVoteReply(String username) {
+		JOptionPane.showMessageDialog(this, "Someone disagree " + username + "'s chosen",
+				"Vote Reply", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	/**

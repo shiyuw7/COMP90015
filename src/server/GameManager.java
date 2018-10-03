@@ -73,6 +73,9 @@ public class GameManager {
 				connectedClients.get(i).write(jsonObject.toString());
 			}
 		} else {
+			if (connectedClients.indexOf(clientConnection) < currentPlayer) {
+				currentPlayer--;
+			}
 			connectedClients.remove(clientConnection);
 		}
 		// Broadcast Remove user
@@ -219,9 +222,10 @@ public class GameManager {
 				passCount = 0;
 			} else {
 				JSONObject jsonObject = new JSONObject();
+				jsonObject.put(Constants.USER_NAME, connectedClients.get(currentPlayer).getClientName());
 				jsonObject.put(Constants.IS_WORD, false);
 				jsonObject = JsonUtil.parse(Constants.VOTE_REPLY, jsonObject);
-				connectedClients.get(currentPlayer).write(jsonObject.toString());
+				broadcastToAll(jsonObject.toString());
 
 				currentPlayer++;
 				if (currentPlayer >= connectedClients.size()) {

@@ -110,10 +110,12 @@ public class ServerListener extends Thread {
 						break;
 					case Constants.VOTE_REPLY:
 						if (!data.getBoolean(Constants.IS_WORD)) {
-							gamePanel.getBoardPanel().clearCharacter();
-							gamePanel.revalidate();
-							gamePanel.repaint();
-							MainFrame.getInstance().showVoteReply();
+							if(data.getString(Constants.USER_NAME).equals(ClientConnection.getInstance().getUserName())) {
+								gamePanel.getBoardPanel().clearCharacter();
+								gamePanel.revalidate();
+								gamePanel.repaint();
+							}
+							MainFrame.getInstance().showVoteReply(data.getString(Constants.USER_NAME));
 						}
 						break;
 					case Constants.PLACE_CHARACTER:
