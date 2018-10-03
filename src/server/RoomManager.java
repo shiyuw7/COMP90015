@@ -6,8 +6,8 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import common.Constants;
-import common.JsonUtil;
+import server.common.Constants;
+import server.common.JsonUtil;
 
 public class RoomManager {
 

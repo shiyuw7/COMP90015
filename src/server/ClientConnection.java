@@ -11,8 +11,8 @@ import java.net.SocketException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import common.Constants;
-import common.JsonUtil;
+import server.common.Constants;
+import server.common.JsonUtil;
 
 public class ClientConnection extends Thread {
 

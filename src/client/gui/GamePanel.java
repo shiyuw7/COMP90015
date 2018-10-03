@@ -21,8 +21,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import client.ClientConnection;
-import common.Constants;
-import common.JsonUtil;
+import client.common.Constants;
+import client.common.JsonUtil;
 
 @SuppressWarnings("serial")
 public class GamePanel extends JPanel {

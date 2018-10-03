@@ -15,7 +15,7 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputAdapter;
 
-import common.GameBoard;
+import client.common.GameBoard;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 

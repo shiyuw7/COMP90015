@@ -13,8 +13,8 @@ import org.json.JSONObject;
 
 import client.gui.GamePanel;
 import client.gui.MainFrame;
-import common.Constants;
-import common.JsonUtil;
+import client.common.Constants;
+import client.common.JsonUtil;
 
 public class ServerListener extends Thread {
 

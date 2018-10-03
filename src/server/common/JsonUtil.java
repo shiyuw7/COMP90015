@@ -1,4 +1,4 @@
-package common;
+package server.common;
 
 import org.json.JSONArray;
 import org.json.JSONException;

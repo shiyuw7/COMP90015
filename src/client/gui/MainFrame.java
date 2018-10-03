@@ -14,12 +14,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import client.ClientConnection;
-import common.Constants;
+import client.common.Constants;
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
 
 	private static MainFrame instance;
+	private ConnectPanel connectPanel;
 	private LoginPanel loginPanel;
 	private LobbyPanel lobbyPanel;
 	private GamePanel gamePanel;
@@ -45,8 +46,19 @@ public class MainFrame extends JFrame {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation((int) ((screenSize.getWidth() - this.getWidth()) / 2),
 				(int) ((screenSize.getHeight() - this.getHeight()) / 2));
+		connectPanel = new ConnectPanel();
+		add(connectPanel);
+	}
+
+	/**
+	 * From connect to login
+	 */
+	public void connect() {
+		remove(connectPanel);
 		loginPanel = new LoginPanel();
 		add(loginPanel);
+		revalidate();
+		repaint();
 	}
 
 	/**
@@ -71,7 +83,7 @@ public class MainFrame extends JFrame {
 		revalidate();
 		repaint();
 	}
-	
+
 	/**
 	 * From game to login
 	 */

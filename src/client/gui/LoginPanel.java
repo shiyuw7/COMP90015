@@ -13,8 +13,8 @@ import javax.swing.JTextField;
 import org.json.JSONObject;
 
 import client.ClientConnection;
-import common.Constants;
-import common.JsonUtil;
+import client.common.Constants;
+import client.common.JsonUtil;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
