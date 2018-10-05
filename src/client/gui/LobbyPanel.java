@@ -208,6 +208,7 @@ public class LobbyPanel extends JPanel {
 			lobbyListModel.addElement(userName);
 		}
 		this.lobbyList = new JList<>(lobbyListModel);
+		this.lobbyList.setFont(new Font("Century", Font.PLAIN, 28));
 		lobbyScroll.setViewportView(this.lobbyList);
 	}
 
@@ -220,6 +221,7 @@ public class LobbyPanel extends JPanel {
 			roomListModel.addElement(userName);
 		}
 		this.roomList = new JList<>(roomListModel);
+		this.roomList.setFont(new Font("Century", Font.PLAIN, 28));
 		roomScroll.setViewportView(this.roomList);
 	}
 
@@ -229,6 +231,7 @@ public class LobbyPanel extends JPanel {
 	public void addToLobbyList(String userName) {
 		lobbyListModel.addElement(userName);
 		lobbyList = new JList<>(lobbyListModel);
+		this.lobbyList.setFont(new Font("Century", Font.PLAIN, 28));
 		lobbyScroll.setViewportView(lobbyList);
 	}
 
@@ -238,6 +241,7 @@ public class LobbyPanel extends JPanel {
 	public void addToRoomList(String userName) {
 		roomListModel.addElement(userName);
 		roomList = new JList<>(roomListModel);
+		this.roomList.setFont(new Font("Century", Font.PLAIN, 28));
 		roomScroll.setViewportView(roomList);
 		removeFromLobbyList(userName);
 	}
@@ -248,6 +252,7 @@ public class LobbyPanel extends JPanel {
 	public void removeFromLobbyList(String userName) {
 		lobbyListModel.removeElement(userName);
 		lobbyList = new JList<>(lobbyListModel);
+		this.lobbyList.setFont(new Font("Century", Font.PLAIN, 28));
 		lobbyScroll.setViewportView(lobbyList);
 	}
 
@@ -257,6 +262,7 @@ public class LobbyPanel extends JPanel {
 	public void removeFromRoomList(String userName) {
 		roomListModel.removeElement(userName);
 		roomList = new JList<>(roomListModel);
+		this.roomList.setFont(new Font("Century", Font.PLAIN, 28));
 		roomScroll.setViewportView(roomList);
 	}
 
@@ -266,6 +272,7 @@ public class LobbyPanel extends JPanel {
 	public void clearRoom() {
 		roomListModel.removeAllElements();
 		roomList = new JList<>(roomListModel);
+		this.roomList.setFont(new Font("Century", Font.PLAIN, 28));
 		roomScroll.setViewportView(roomList);
 	}
 
