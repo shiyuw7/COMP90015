@@ -1,5 +1,6 @@
 package client.gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -32,14 +33,24 @@ public class LoginPanel extends JPanel {
 	 */
 	private void initialize() {
 		setPreferredSize(new Dimension(Constants.WIDTH, Constants.HEIGHT));
+		setLayout(null);
+		setBackground(new Color(245, 255, 250));
 
 		// Create component
 		JLabel userNameLabel = new JLabel("Enter username:");
-		userNameLabel.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+		userNameLabel.setBounds(44, 185, 272, 100);
+		userNameLabel.setFont(new Font("Century", Font.PLAIN, 31));
 		userNameLabel.setPreferredSize(new Dimension(100, 24));
+
 		userNameField = new JTextField();
+		userNameField.setFont(new Font("Calibri Light", Font.PLAIN, 31));
+		userNameField.setBounds(331, 214, 198, 52);
 		userNameField.setPreferredSize(new Dimension(100, 24));
+
 		JButton loginButton = new JButton("Login");
+		loginButton.setBackground(new Color(245, 255, 250));
+		loginButton.setFont(new Font("Arial Black", Font.PLAIN, 25));
+		loginButton.setBounds(331, 308, 152, 61);
 		loginButton.setPreferredSize(new Dimension(100, 24));
 
 		// Add component

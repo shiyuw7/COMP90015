@@ -13,8 +13,6 @@ import static javax.swing.JOptionPane.showMessageDialog;
 
 import java.awt.Color;
 import javax.swing.JButton;
-import java.awt.SystemColor;
-import javax.swing.UIManager;
 
 import client.ClientConnection;
 import client.ServerListener;
@@ -46,23 +44,41 @@ public class ConnectPanel extends JPanel {
 	 */
 	public void initialize() {
 		setPreferredSize(new Dimension(Constants.WIDTH, Constants.HEIGHT));
+		setLayout(null);
+		setBackground(new Color(255, 255, 255));
 
 		JLabel lblScrabbleGame = new JLabel("Scrabble Game");
-		lblScrabbleGame.setForeground(Color.ORANGE);
-		lblScrabbleGame.setFont(new Font("Calibri Light", Font.BOLD | Font.ITALIC, 50));
-		add(lblScrabbleGame);
+		lblScrabbleGame.setBounds(83, 106, 597, 110);
+		lblScrabbleGame.setForeground(new Color(112, 128, 144));
+		lblScrabbleGame.setFont(new Font("Nueva Std", Font.BOLD | Font.ITALIC, 87));
 
 		JLabel lblServerIp = new JLabel("Server IP");
-		JLabel lblNewLabel = new JLabel("Port Number");
-		serverIP = new JTextField();
-		serverIP.setColumns(10);
-		serverPort = new JTextField();
-		serverPort.setColumns(5);
-		JButton connectButton = new JButton("Connect");
-		connectButton.setBackground(UIManager.getColor("InternalFrame.inactiveTitleGradient"));
-		connectButton.setForeground(SystemColor.textText);
-		connectButton.setFont(new Font("Calibri Light", Font.PLAIN, 26));
+		lblServerIp.setBounds(155, 235, 140, 45);
+		lblServerIp.setForeground(Color.GRAY);
+		lblServerIp.setFont(new Font("Century", Font.PLAIN, 29));
 
+		serverIP = new JTextField();
+		serverIP.setFont(new Font("Calibri Light", Font.PLAIN, 26));
+		serverIP.setBounds(356, 236, 203, 45);
+		serverIP.setColumns(10);
+
+		JLabel lblNewLabel = new JLabel("Port Number");
+		lblNewLabel.setBounds(144, 313, 182, 45);
+		lblNewLabel.setForeground(Color.GRAY);
+		lblNewLabel.setFont(new Font("Century", Font.PLAIN, 29));
+
+		serverPort = new JTextField();
+		serverPort.setFont(new Font("Calibri Light", Font.PLAIN, 26));
+		serverPort.setBounds(356, 314, 203, 45);
+		serverPort.setColumns(5);
+
+		JButton connectButton = new JButton("Connect");
+		connectButton.setBounds(356, 398, 182, 51);
+		connectButton.setBackground(new Color(245, 255, 250));
+		connectButton.setForeground(new Color(112, 128, 144));
+		connectButton.setFont(new Font("Arial Black", Font.PLAIN, 23));
+
+		add(lblScrabbleGame);
 		add(lblServerIp);
 		add(serverIP);
 		add(lblNewLabel);

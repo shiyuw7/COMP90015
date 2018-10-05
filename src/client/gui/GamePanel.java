@@ -1,6 +1,8 @@
 package client.gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -51,6 +53,7 @@ public class GamePanel extends JPanel {
 
 		// Board Panel
 		boardPanel = new BoardPanel();
+		boardPanel.setBackground(new Color(245, 245, 220));
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.anchor = GridBagConstraints.CENTER;
 		c.gridx = 0;
@@ -65,17 +68,23 @@ public class GamePanel extends JPanel {
 		currentPlayerLabel = new JLabel();
 		// Combo box
 		comboBox = new JComboBox<>(Constants.CHARACTERS);
-		comboBox.setPreferredSize(new Dimension(width / 11, height / 8));
+		comboBox.setPreferredSize(new Dimension(width / 11, height / 11));
 		comboBox.setSelectedItem(null);
+		comboBox.setBackground(Color.white);
+		comboBox.setFont(new Font("Century", Font.PLAIN, 18));
 		comboBox.addActionListener(boardPanel.new ComboBoxActionListener());
 		// Pass Button
 		passButton = new JButton(Constants.PASS);
 		passButton.addActionListener(new PassButtonActionListener());
+		passButton.setBackground(new Color(245, 255, 250));
+		passButton.setFont(new Font("Calibri Light", Font.PLAIN, 16));
+		passButton.setBounds(621, 392, 115, 48);
 		// Confirm Panel
 		confirmPanel = new JPanel();
 		confirmPanel.setPreferredSize(new Dimension(width / 5, height / 4));
 		confirmPanel.setBorder(new CompoundBorder(new TitledBorder("Confirm Window"),
 				new EmptyBorder(2, 3, 2, 3)));
+		confirmPanel.setBackground(new Color(245, 245, 220));
 		// Count Table
 		countTableModel = new DefaultTableModel() {
 			@Override
@@ -87,14 +96,19 @@ public class GamePanel extends JPanel {
 		countTable = new JTable(countTableModel);
 		scrollPane = new JScrollPane(countTable);
 		scrollPane.setPreferredSize(new Dimension(width / 5, height / 3));
+		scrollPane.setBackground(new Color(245, 245, 220));
 		// Logout Button
 		logoutButton = new JButton("Log Out");
 		logoutButton.addActionListener(new LogoutButtonActionListener());
+		logoutButton.setBackground(new Color(245, 255, 250));
+		logoutButton.setFont(new Font("Calibri Light", Font.PLAIN, 16));
+		logoutButton.setBounds(621, 392, 115, 48);
 
 		JPanel jPanel = new JPanel();
 		jPanel.setPreferredSize(new Dimension(
 				MainFrame.getInstance().getWidth() - MainFrame.getInstance().getHeight(),
 				MainFrame.getInstance().getHeight() - 40));
+		jPanel.setBackground(new Color(245, 245, 220));
 		jPanel.add(currentPlayerLabel);
 		jPanel.add(comboBox);
 		jPanel.add(passButton);

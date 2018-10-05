@@ -106,15 +106,18 @@ public class ServerListener extends Thread {
 						MainFrame.getInstance().getLobbyPanel().clearRoom();
 						break;
 					case Constants.VOTE:
+						// Can change to highlight
+						gamePanel.getBoardPanel().setValue(data.getInt(Constants.PLACE_ROW), data.getInt(Constants.PLACE_COLUMN), data.getString(Constants.PLACE_VALUE));
+						
 						gamePanel.generateVoteDialog(data);
 						break;
 					case Constants.VOTE_REPLY:
 						if (!data.getBoolean(Constants.IS_WORD)) {
-							if(data.getString(Constants.USER_NAME).equals(ClientConnection.getInstance().getUserName())) {
-								gamePanel.getBoardPanel().clearCharacter();
-								gamePanel.revalidate();
-								gamePanel.repaint();
-							}
+//							if(data.getString(Constants.USER_NAME).equals(ClientConnection.getInstance().getUserName())) {
+//								gamePanel.getBoardPanel().clearCharacter();
+//								gamePanel.revalidate();
+//								gamePanel.repaint();
+//							}
 							MainFrame.getInstance().showVoteReply(data.getString(Constants.USER_NAME));
 						}
 						break;

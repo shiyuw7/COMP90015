@@ -126,7 +126,7 @@ public class BoardPanel extends JPanel {
 		gameBoard.clearValue(previousRow, previousColumn);
 		repaint();
 	}
-
+	
 	public class ComboBoxActionListener implements ActionListener {
 		@SuppressWarnings("unchecked")
 		@Override

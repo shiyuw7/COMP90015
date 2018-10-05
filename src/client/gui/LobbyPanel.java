@@ -2,6 +2,8 @@ package client.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -40,28 +42,75 @@ public class LobbyPanel extends JPanel {
 	 */
 	private void initialize() {
 		setPreferredSize(MainFrame.getInstance().getPreferredSize());
+		setLayout(null);
+		setBackground(new Color(245, 255, 250));
 
 		// Create component
 		JButton startButton = new JButton("Start Game");
+		startButton.setBackground(new Color(245, 255, 250));
+		startButton.setFont(new Font("Arial Black", Font.PLAIN, 18));
+		startButton.setBounds(576, 199, 160, 50);
+
 		JButton joinButton = new JButton("Join Room");
+		joinButton.setBackground(new Color(245, 255, 250));
+		joinButton.setFont(new Font("Arial Black", Font.PLAIN, 18));
+		joinButton.setBounds(576, 264, 160, 45);
+
 		JButton leaveButton = new JButton("Leave Room");
+		leaveButton.setBackground(new Color(245, 255, 250));
+		leaveButton.setFont(new Font("Arial Black", Font.PLAIN, 18));
+		leaveButton.setBounds(576, 324, 160, 51);
+
 		JButton inviteButton = new JButton("Invite");
+		inviteButton.setBackground(new Color(245, 255, 250));
+		inviteButton.setFont(new Font("Arial Black", Font.PLAIN, 18));
+		inviteButton.setBounds(621, 392, 115, 48);
+
 		JButton refreshButton = new JButton("Refresh");
+		refreshButton.setBackground(new Color(245, 255, 250));
+		refreshButton.setFont(new Font("Arial Black", Font.PLAIN, 18));
+		refreshButton.setBounds(621, 455, 115, 45);
 
 		lobbyList = new JList<>();
 		roomList = new JList<>();
+
 		lobbyScroll = new JScrollPane(lobbyList);
+		lobbyScroll.setBounds(299, 68, 184, 432);
 		lobbyScroll.setPreferredSize(new Dimension(400, 200));
 		JPanel lobbyScrollHeader = new JPanel();
-		lobbyScrollHeader.add(new JLabel("Lobby List"));
+		FlowLayout flowLayout_1 = (FlowLayout) lobbyScrollHeader.getLayout();
+		flowLayout_1.setVgap(15);
+		JLabel label_1 = new JLabel("Lobby List");
+		label_1.setFont(new Font("Nueva Std", Font.PLAIN, 25));
+		label_1.setForeground(new Color(255, 255, 255));
+		lobbyScrollHeader.add(label_1);
 		lobbyScrollHeader.setBackground(Color.GRAY);
 		lobbyScroll.setColumnHeaderView(lobbyScrollHeader);
+
 		roomScroll = new JScrollPane(roomList);
+		roomScroll.setBounds(51, 68, 184, 432);
 		roomScroll.setPreferredSize(new Dimension(400, 200));
 		JPanel roomScrollHeader = new JPanel();
-		roomScrollHeader.add(new JLabel("Room List"));
-		roomScrollHeader.setBackground(Color.GRAY);
+		FlowLayout flowLayout = (FlowLayout) roomScrollHeader.getLayout();
+		flowLayout.setVgap(15);
+		roomScrollHeader.setForeground(new Color(240, 255, 240));
+		JLabel label = new JLabel("Room List");
+		label.setFont(new Font("Nueva Std", Font.PLAIN, 25));
+		label.setForeground(new Color(255, 255, 255));
+		roomScrollHeader.add(label);
+		roomScrollHeader.setBackground(new Color(112, 128, 144));
 		roomScroll.setColumnHeaderView(roomScrollHeader);
+
+		JLabel lblScrabbleGame = new JLabel("Scrabble");
+		lblScrabbleGame.setForeground(new Color(112, 128, 144));
+		lblScrabbleGame.setFont(new Font("Nueva Std", Font.PLAIN, 40));
+		lblScrabbleGame.setBounds(576, 58, 160, 68);
+
+		JLabel lblNewLabel = new JLabel("Game");
+		lblNewLabel.setForeground(new Color(112, 128, 144));
+		lblNewLabel.setBackground(new Color(112, 128, 144));
+		lblNewLabel.setFont(new Font("Nueva Std", Font.PLAIN, 40));
+		lblNewLabel.setBounds(631, 124, 105, 60);
 
 		// Add component
 		add(startButton);
@@ -69,9 +118,10 @@ public class LobbyPanel extends JPanel {
 		add(leaveButton);
 		add(inviteButton);
 		add(refreshButton);
-
 		add(lobbyScroll);
 		add(roomScroll);
+		add(lblScrabbleGame);
+		add(lblNewLabel);
 
 		// Add listener
 		startButton.addActionListener(new ActionListener() {
@@ -80,7 +130,8 @@ public class LobbyPanel extends JPanel {
 				if (!roomListModel.contains(ClientConnection.getInstance().getUserName())) {
 					showMessageDialog(MainFrame.getInstance(), "You are not in the room");
 				} else if (roomListModel.size() < 2) {
-					showMessageDialog(MainFrame.getInstance(), "Users in the room should larger than 1");
+					showMessageDialog(MainFrame.getInstance(),
+							"Users in the room should larger than 1");
 				} else {
 					// broadcast Game Start to other players
 					JSONObject jsonObject = new JSONObject();
