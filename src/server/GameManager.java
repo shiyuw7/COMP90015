@@ -178,7 +178,31 @@ public class GameManager {
 		gameData.put(Constants.COUNT_LIST, countList);
 		gameData.put(Constants.ROUND, gameBoard.getRound());
 		gameData = JsonUtil.parse(Constants.JOIN_GAME_REPLY, gameData);
-		System.out.println(gameData.toString());
+		clientConnection.write(gameData.toString());
+	}
+	
+	/**
+	 * A client want to refresh
+	 */
+	public synchronized void refreshGame(ClientConnection clientConnection) {
+		JSONObject gameData = new JSONObject();
+		gameData.put(Constants.IS_STARTED, true);
+		JSONArray board = JsonUtil.stringArrayToJsonArrayTwo(gameBoard.getBoard());
+		gameData.put(Constants.BOARD, board);
+
+		JSONArray countList = new JSONArray();
+		for (int i = 0; i < connectedClients.size(); i++) {
+			if (i == currentPlayer) {
+				gameData.put(Constants.NEXT_USER_NAME, connectedClients.get(i).getClientName());
+			}
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put(Constants.USER_NAME, connectedClients.get(i).getClientName());
+			jsonObject.put(Constants.USER_COUNT, connectedClients.get(i).getClientCount());
+			countList.put(jsonObject);
+		}
+		gameData.put(Constants.COUNT_LIST, countList);
+		gameData.put(Constants.ROUND, gameBoard.getRound());
+		gameData = JsonUtil.parse(Constants.REFRESH_GAME, gameData);
 		clientConnection.write(gameData.toString());
 	}
 

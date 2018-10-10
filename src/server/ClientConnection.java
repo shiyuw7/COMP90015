@@ -152,6 +152,9 @@ public class ClientConnection extends Thread {
 						GameManager.getInstance().start();
 					}
 					break;
+				case Constants.REFRESH_GAME:
+					GameManager.getInstance().refreshGame(this);
+					break;
 				case Constants.JOIN_GAME:
 					if (GameManager.getInstance().getStatus()) {
 						GameManager.getInstance().clientJoined(this);

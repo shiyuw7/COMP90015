@@ -30,6 +30,7 @@ public class Constants {
 	public final static String INVITE_REPLY = "inviteReply";
 	public final static String REFRESH = "refresh";
 	public final static String START_GAME = "startGame";
+	public final static String REFRESH_GAME = "refreshGame";
 	public final static String START_GAME_REPLY = "startGameReply";
 	public final static String JOIN_GAME = "joinGame";
 	public final static String JOIN_GAME_REPLY = "joinGameReply";

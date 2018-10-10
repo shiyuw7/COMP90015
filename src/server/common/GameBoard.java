@@ -3,7 +3,7 @@ package server.common;
 import java.util.ArrayList;
 import java.util.List;
 
-import client.common.Constants;
+import server.common.Constants;
 
 public class GameBoard {
 

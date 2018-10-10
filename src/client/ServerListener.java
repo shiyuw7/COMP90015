@@ -103,18 +103,27 @@ public class ServerListener extends Thread {
 						}
 						break;
 					case Constants.JOIN_GAME:
-						gamePanel.addToCountTable(data.getString(Constants.USER_NAME));
+						gamePanel.addToCountTable(data.getString(Constants.USER_NAME), "0");
 						break;
 					case Constants.JOIN_GAME_REPLY:
 						if (data.getBoolean(Constants.IS_STARTED)) {
 							MainFrame.getInstance().joinGame(data);
 							gamePanel = MainFrame.getInstance().getGamePanel();
-							gamePanel.initializeCountTable(data.getJSONArray(Constants.COUNT_LIST));
+							gamePanel
+									.initializeCountTable(data.getJSONArray(Constants.COUNT_LIST));
 							gamePanel.getComboBox().setEnabled(false);
 							gamePanel.getPassButton().setEnabled(false);
 							gamePanel.setCurrentPlayer(data.getString(Constants.NEXT_USER_NAME));
 						} else {
 							MainFrame.getInstance().getLobbyPanel().gameNotStarted();
+						}
+						break;
+					case Constants.REFRESH_GAME:
+						if (data.getBoolean(Constants.IS_STARTED)) {
+							// re-arrange game
+							gamePanel = MainFrame.getInstance().getGamePanel();
+							gamePanel.refreshCountTable(data.getJSONArray(Constants.COUNT_LIST));
+							gamePanel.setCurrentPlayer(data.getString(Constants.NEXT_USER_NAME));
 						}
 						break;
 					case Constants.CLEAR_ROOM:

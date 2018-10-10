@@ -109,6 +109,12 @@ public class GamePanel extends JPanel {
 		logoutButton.setBackground(new Color(245, 255, 250));
 		logoutButton.setFont(new Font("Calibri Light", Font.PLAIN, 16));
 		logoutButton.setBounds(621, 392, 115, 48);
+		// Logout Button
+		JButton refreshButton = new JButton("Refresh");
+		refreshButton.addActionListener(new RefreshButtonActionListener());
+		refreshButton.setBackground(new Color(245, 255, 250));
+		refreshButton.setFont(new Font("Calibri Light", Font.PLAIN, 16));
+		refreshButton.setBounds(621, 460, 115, 48);
 
 		JPanel jPanel = new JPanel();
 		jPanel.setPreferredSize(new Dimension(
@@ -121,6 +127,7 @@ public class GamePanel extends JPanel {
 		jPanel.add(confirmPanel);
 		jPanel.add(scrollPane);
 		jPanel.add(logoutButton);
+		jPanel.add(refreshButton);
 
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.anchor = GridBagConstraints.CENTER;
@@ -190,6 +197,20 @@ public class GamePanel extends JPanel {
 	}
 
 	/**
+	 * Every time player refresh
+	 */
+	public class RefreshButtonActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JSONObject jsonObject = new JSONObject();
+			jsonObject = JsonUtil.parse(Constants.REFRESH_GAME, jsonObject);
+			if (!ClientConnection.getInstance().sendMsg(jsonObject.toString())) {
+				MainFrame.getInstance().disconnect(this.getClass());
+			}
+		}
+	}
+
+	/**
 	 * Initialize Count Table
 	 */
 	public void initializeCountTable(JSONArray data) {
@@ -197,6 +218,20 @@ public class GamePanel extends JPanel {
 		String[] counts = JsonUtil.jsonArrayToIntArray(data, Constants.USER_COUNT);
 		countTableModel.addColumn("Players", usernames);
 		countTableModel.addColumn("Count", counts);
+	}
+
+	/**
+	 * Refresh Count Table
+	 */
+	public void refreshCountTable(JSONArray data) {
+		for (int i = countTableModel.getRowCount() - 1; i > -1; i--) {
+			countTableModel.removeRow(i);
+		}
+		String[] usernames = JsonUtil.jsonArrayToStringArray(data, Constants.USER_NAME);
+		String[] counts = JsonUtil.jsonArrayToIntArray(data, Constants.USER_COUNT);
+		for (int i = 0; i < usernames.length; i++) {
+			addToCountTable(usernames[i], counts[i]);
+		}
 	}
 
 	/**
@@ -213,10 +248,10 @@ public class GamePanel extends JPanel {
 	/**
 	 * Add to Count Table
 	 */
-	public void addToCountTable(String username) {
+	public void addToCountTable(String username, String count) {
 		String[] rowData = new String[2];
 		rowData[0] = username;
-		rowData[1] = "0";
+		rowData[1] = count;
 		countTableModel.addRow(rowData);
 	}
 
