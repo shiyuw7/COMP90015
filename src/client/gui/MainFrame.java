@@ -1,5 +1,7 @@
 package client.gui;
 
+import static javax.swing.JOptionPane.showMessageDialog;
+
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.List;
@@ -15,6 +17,8 @@ import org.json.JSONObject;
 
 import client.ClientConnection;
 import client.common.Constants;
+import client.common.GameBoard;
+import client.common.JsonUtil;
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
@@ -85,11 +89,43 @@ public class MainFrame extends JFrame {
 	}
 
 	/**
+	 * From lobby to game
+	 */
+	public void joinGame(JSONObject data) {
+		String[][] board = JsonUtil.jsonArrayToStringArrayTwo(data.getJSONArray(Constants.BOARD));
+		GameBoard gameBoard = new GameBoard(Constants.ROW, Constants.COLUMN, board,
+				data.getInt(Constants.ROUND));
+		remove(lobbyPanel);
+		gamePanel = new GamePanel(gameBoard);
+		add(gamePanel);
+		revalidate();
+		repaint();
+	}
+
+	/**
 	 * From game to login
 	 */
 	public void logout() {
 		remove(gamePanel);
 		add(loginPanel);
+		revalidate();
+		repaint();
+	}
+
+	/**
+	 * From game to connect
+	 */
+	public void disconnect(Class<?> c) {
+		showMessageDialog(this, "Lost Connection");
+		if (c.getName().contains("LoginPanel")) {
+			remove(loginPanel);
+		} else if (c.getName().contains("LobbyPanel")) {
+			remove(lobbyPanel);
+		} else if (c.getName().contains("GamePanel")) {
+			remove(gamePanel);
+		}
+		connectPanel = new ConnectPanel();
+		add(connectPanel);
 		revalidate();
 		repaint();
 	}

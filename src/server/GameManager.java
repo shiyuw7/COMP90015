@@ -151,6 +151,38 @@ public class GameManager {
 	}
 
 	/**
+	 * A client join to game
+	 */
+	public synchronized void clientJoined(ClientConnection clientConnection) {
+		JSONObject broadcastMsg = new JSONObject();
+		broadcastMsg.put(Constants.USER_NAME, clientConnection.getClientName());
+		broadcastMsg = JsonUtil.parse(Constants.JOIN_GAME, broadcastMsg);
+		broadcastToAll(broadcastMsg.toString());
+		connectedClients.add(clientConnection);
+
+		JSONObject gameData = new JSONObject();
+		gameData.put(Constants.IS_STARTED, true);
+		JSONArray board = JsonUtil.stringArrayToJsonArrayTwo(gameBoard.getBoard());
+		gameData.put(Constants.BOARD, board);
+
+		JSONArray countList = new JSONArray();
+		for (int i = 0; i < connectedClients.size(); i++) {
+			if (i == currentPlayer) {
+				gameData.put(Constants.NEXT_USER_NAME, connectedClients.get(i).getClientName());
+			}
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put(Constants.USER_NAME, connectedClients.get(i).getClientName());
+			jsonObject.put(Constants.USER_COUNT, connectedClients.get(i).getClientCount());
+			countList.put(jsonObject);
+		}
+		gameData.put(Constants.COUNT_LIST, countList);
+		gameData.put(Constants.ROUND, gameBoard.getRound());
+		gameData = JsonUtil.parse(Constants.JOIN_GAME_REPLY, gameData);
+		System.out.println(gameData.toString());
+		clientConnection.write(gameData.toString());
+	}
+
+	/**
 	 * Vote
 	 */
 	public synchronized void vote(int row, int column, String value, String word,
@@ -222,7 +254,8 @@ public class GameManager {
 				passCount = 0;
 			} else {
 				JSONObject jsonObject = new JSONObject();
-				jsonObject.put(Constants.USER_NAME, connectedClients.get(currentPlayer).getClientName());
+				jsonObject.put(Constants.USER_NAME,
+						connectedClients.get(currentPlayer).getClientName());
 				jsonObject.put(Constants.IS_WORD, false);
 				jsonObject = JsonUtil.parse(Constants.VOTE_REPLY, jsonObject);
 				broadcastToAll(jsonObject.toString());

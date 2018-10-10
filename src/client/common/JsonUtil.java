@@ -4,6 +4,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import server.common.Constants;
+
 public class JsonUtil {
 
 	/**
@@ -112,6 +114,29 @@ public class JsonUtil {
 		String[] stringArray = new String[jsonArray.length()];
 		for (int i = 0; i < jsonArray.length(); i++) {
 			stringArray[i] = jsonArray.getJSONObject(i).getInt(dataType) + "";
+		}
+		return stringArray;
+	}
+
+	public static JSONArray stringArrayToJsonArrayTwo(String[][] stringArray) {
+		JSONArray parentJsonArray = new JSONArray();
+		for (int i = 0; i < Constants.ROW; i++) {
+			JSONArray childJsonArray = new JSONArray();
+			for (int j = 0; j < Constants.COLUMN; j++) {
+				childJsonArray.put(stringArray[i][j]);
+			}
+			parentJsonArray.put(childJsonArray);
+		}
+		return parentJsonArray;
+	}
+
+	public static String[][] jsonArrayToStringArrayTwo(JSONArray jsonArray) {
+		String[][] stringArray = new String[Constants.ROW][Constants.COLUMN];
+		for (int i = 0; i < Constants.ROW; i++) {
+			JSONArray childJsonArray = jsonArray.getJSONArray(i);
+			for (int j = 0; j < Constants.COLUMN; j++) {
+				stringArray[i][j] = childJsonArray.getString(j);
+			}
 		}
 		return stringArray;
 	}

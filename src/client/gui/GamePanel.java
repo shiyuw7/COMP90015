@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import client.ClientConnection;
 import client.common.Constants;
+import client.common.GameBoard;
 import client.common.JsonUtil;
 
 @SuppressWarnings("serial")
@@ -41,6 +42,12 @@ public class GamePanel extends JPanel {
 	private JScrollPane scrollPane;
 
 	public GamePanel() {
+		boardPanel = new BoardPanel();
+		initialize();
+	}
+
+	public GamePanel(GameBoard gameBoard) {
+		boardPanel = new BoardPanel(gameBoard);
 		initialize();
 	}
 
@@ -52,7 +59,6 @@ public class GamePanel extends JPanel {
 		GridBagConstraints c = new GridBagConstraints();
 
 		// Board Panel
-		boardPanel = new BoardPanel();
 		boardPanel.setBackground(new Color(245, 245, 220));
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.anchor = GridBagConstraints.CENTER;
@@ -144,7 +150,10 @@ public class GamePanel extends JPanel {
 			jsonObject.put(Constants.CHOSEN_WORD, jButton.getText());
 			// Here should change to vote
 			jsonObject = JsonUtil.parse(Constants.VOTE, jsonObject);
-			ClientConnection.getInstance().sendMsg(jsonObject.toString());
+			if (!ClientConnection.getInstance().sendMsg(jsonObject.toString())) {
+				MainFrame.getInstance().disconnect(this.getClass());
+			}
+			;
 		}
 	}
 
@@ -170,10 +179,13 @@ public class GamePanel extends JPanel {
 	public class LogoutButtonActionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			MainFrame.getInstance().logout();
 			JSONObject jsonObject = new JSONObject();
 			jsonObject = JsonUtil.parse(Constants.LOGOUT, jsonObject);
-			ClientConnection.getInstance().sendMsg(jsonObject.toString());
+			if (!ClientConnection.getInstance().sendMsg(jsonObject.toString())) {
+				MainFrame.getInstance().disconnect(this.getClass());
+			} else {
+				MainFrame.getInstance().logout();
+			}
 		}
 	}
 
@@ -196,6 +208,16 @@ public class GamePanel extends JPanel {
 				countTableModel.setValueAt(usercount + "", i, 1);
 			}
 		}
+	}
+
+	/**
+	 * Add to Count Table
+	 */
+	public void addToCountTable(String username) {
+		String[] rowData = new String[2];
+		rowData[0] = username;
+		rowData[1] = "0";
+		countTableModel.addRow(rowData);
 	}
 
 	/**
@@ -231,8 +253,9 @@ public class GamePanel extends JPanel {
 			jsonObject.put(Constants.IS_WORD, false);
 		}
 		jsonObject = JsonUtil.parse(Constants.VOTE_REPLY, jsonObject);
-		ClientConnection.getInstance().sendMsg(jsonObject.toString());
-
+		if (!ClientConnection.getInstance().sendMsg(jsonObject.toString())) {
+			MainFrame.getInstance().disconnect(this.getClass());
+		}
 		// Cancel Highlight
 	}
 
@@ -247,7 +270,9 @@ public class GamePanel extends JPanel {
 			// Send the status of every round to server
 			JSONObject jsonObject = new JSONObject();
 			jsonObject = JsonUtil.parse(Constants.PASS, jsonObject);
-			ClientConnection.getInstance().sendMsg(jsonObject.toString());
+			if (!ClientConnection.getInstance().sendMsg(jsonObject.toString())) {
+				MainFrame.getInstance().disconnect(this.getClass());
+			}
 		}
 	}
 

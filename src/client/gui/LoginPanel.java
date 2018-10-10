@@ -70,7 +70,9 @@ public class LoginPanel extends JPanel {
 					JSONObject jsonObject = new JSONObject();
 					jsonObject.put(Constants.USER_NAME, username);
 					jsonObject = JsonUtil.parse(Constants.LOGIN, jsonObject);
-					ClientConnection.getInstance().sendMsg(jsonObject.toString());
+					if (!ClientConnection.getInstance().sendMsg(jsonObject.toString())) {
+						MainFrame.getInstance().disconnect(this.getClass());
+					}
 				} else {
 					showMessageDialog(MainFrame.getInstance(), "Username invalid");
 				}

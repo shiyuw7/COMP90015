@@ -133,7 +133,7 @@ public class ClientConnection extends Thread {
 					if (GameManager.getInstance().getStatus()) {
 						// if game has started
 						jsonObject.put(Constants.IS_STARTED, true);
-						jsonObject = JsonUtil.parse(Constants.REPLY_START_GAME, jsonObject);
+						jsonObject = JsonUtil.parse(Constants.START_GAME_REPLY, jsonObject);
 						write(jsonObject.toString());
 					} else {
 						GameManager.getInstance().setStatus(true);
@@ -150,6 +150,16 @@ public class ClientConnection extends Thread {
 						LobbyManager.getInstance().broadcastToAll(jsonObject.toString());
 						RoomManager.getInstance().clearRoom();
 						GameManager.getInstance().start();
+					}
+					break;
+				case Constants.JOIN_GAME:
+					if (GameManager.getInstance().getStatus()) {
+						GameManager.getInstance().clientJoined(this);
+					} else {
+						// if game hasn't started
+						jsonObject.put(Constants.IS_STARTED, false);
+						jsonObject = JsonUtil.parse(Constants.JOIN_GAME_REPLY, jsonObject);
+						write(jsonObject.toString());
 					}
 					break;
 				case Constants.VOTE:

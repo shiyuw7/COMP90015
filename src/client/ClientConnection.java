@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class ClientConnection {
 
@@ -61,6 +62,9 @@ public class ClientConnection {
 				writer.write(msg + "\n");
 				writer.flush();
 				return true;
+			} catch (SocketException e) {
+				e.printStackTrace();
+				return false;
 			} catch (Exception e) {
 				e.printStackTrace();
 				return false;

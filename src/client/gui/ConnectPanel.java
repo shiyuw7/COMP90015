@@ -48,9 +48,9 @@ public class ConnectPanel extends JPanel {
 		setBackground(new Color(255, 255, 255));
 
 		JLabel lblScrabbleGame = new JLabel("Scrabble Game");
-		lblScrabbleGame.setBounds(83, 106, 597, 110);
+		lblScrabbleGame.setBounds(88, 81, 597, 110);
 		lblScrabbleGame.setForeground(new Color(112, 128, 144));
-		lblScrabbleGame.setFont(new Font("Nueva Std", Font.BOLD | Font.ITALIC, 87));
+		lblScrabbleGame.setFont(new Font("Century Gothic", Font.BOLD | Font.ITALIC, 76));
 
 		JLabel lblServerIp = new JLabel("Server IP");
 		lblServerIp.setBounds(155, 235, 140, 45);

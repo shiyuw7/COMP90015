@@ -8,6 +8,8 @@ public class Constants {
 	public final static String[] COUNT_TABLE_COLUMN_NAME = new String[] { "User Name", "Count" };
 	public final static int WIDTH = 800;
 	public final static int HEIGHT = 640;
+	public final static int ROW = 20;
+	public final static int COLUMN = 20;
 
 	// Data transformation format
 	public final static String TYPE = "type";
@@ -28,7 +30,9 @@ public class Constants {
 	public final static String INVITE_REPLY = "inviteReply";
 	public final static String REFRESH = "refresh";
 	public final static String START_GAME = "startGame";
-	public final static String REPLY_START_GAME = "replyStartGame";
+	public final static String START_GAME_REPLY = "startGameReply";
+	public final static String JOIN_GAME = "joinGame";
+	public final static String JOIN_GAME_REPLY = "joinGameReply";
 	public final static String CLEAR_ROOM = "clearRoom";
 	// Game Request type
 	public final static String PLACE_CHARACTER = "placeCharacter";
@@ -46,6 +50,7 @@ public class Constants {
 	public final static String ROOM_LIST = "roomList";
 	public final static String GAME_LIST = "gameList";
 	public final static String COUNT_LIST = "countList";
+	public final static String BOARD = "board";
 	// String data type
 	public final static String USER_NAME = "userName";
 	public final static String NEXT_USER_NAME = "nextUserName";
@@ -57,6 +62,7 @@ public class Constants {
 	public final static String USER_COUNT = "userCount";
 	public final static String PLACE_ROW = "placeRow";
 	public final static String PLACE_COLUMN = "placeColumn";
+	public final static String ROUND = "round";
 	// Boolean data type
 	public final static String IS_UNIQUE = "isUnique";
 	public final static String IS_ACCEPTED = "isAccepted";

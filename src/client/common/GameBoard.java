@@ -11,8 +11,8 @@ public class GameBoard {
 	private int round;
 
 	public GameBoard() {
-		this.ROWS = 20;
-		this.COLUMNS = 20;
+		this.ROWS = Constants.ROW;
+		this.COLUMNS = Constants.COLUMN;
 		this.round = 0;
 		this.board = new String[ROWS][COLUMNS];
 		initializeBoard();
@@ -26,14 +26,14 @@ public class GameBoard {
 		initializeBoard();
 	}
 
-	public GameBoard(GameBoard gameBoard) {
-		this.ROWS = gameBoard.ROWS;
-		this.COLUMNS = gameBoard.COLUMNS;
-		this.round = gameBoard.round;
+	public GameBoard(int rows, int columns, String[][] board, int round) {
+		this.ROWS = rows;
+		this.COLUMNS = columns;
+		this.round = round;
 		this.board = new String[ROWS][COLUMNS];
 		for (int r = 0; r < ROWS; r++) {
 			for (int c = 0; c < COLUMNS; c++) {
-				board[r][c] = gameBoard.board[r][c];
+				this.board[r][c] = board[r][c];
 			}
 		}
 	}
@@ -90,7 +90,7 @@ public class GameBoard {
 	 */
 	public List<String> getWord(int row, int col) {
 		List<String> words = new ArrayList<>();
-//		if (round == 1) {
+		// if (round == 1) {
 		if (!this.isTouch(row, col)) {
 			words.add(this.board[row][col]);
 		} else {

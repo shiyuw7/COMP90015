@@ -51,25 +51,30 @@ public class LobbyPanel extends JPanel {
 		startButton.setFont(new Font("Arial Black", Font.PLAIN, 18));
 		startButton.setBounds(576, 199, 160, 50);
 
+		JButton joinGameButton = new JButton("Join Game");
+		joinGameButton.setBackground(new Color(245, 255, 250));
+		joinGameButton.setFont(new Font("Arial Black", Font.PLAIN, 18));
+		joinGameButton.setBounds(576, 264, 160, 45);
+
 		JButton joinButton = new JButton("Join Room");
 		joinButton.setBackground(new Color(245, 255, 250));
 		joinButton.setFont(new Font("Arial Black", Font.PLAIN, 18));
-		joinButton.setBounds(576, 264, 160, 45);
+		joinButton.setBounds(576, 324, 160, 45);
 
 		JButton leaveButton = new JButton("Leave Room");
 		leaveButton.setBackground(new Color(245, 255, 250));
 		leaveButton.setFont(new Font("Arial Black", Font.PLAIN, 18));
-		leaveButton.setBounds(576, 324, 160, 51);
+		leaveButton.setBounds(576, 392, 160, 51);
 
 		JButton inviteButton = new JButton("Invite");
 		inviteButton.setBackground(new Color(245, 255, 250));
 		inviteButton.setFont(new Font("Arial Black", Font.PLAIN, 18));
-		inviteButton.setBounds(621, 392, 115, 48);
+		inviteButton.setBounds(621, 455, 115, 48);
 
 		JButton refreshButton = new JButton("Refresh");
 		refreshButton.setBackground(new Color(245, 255, 250));
 		refreshButton.setFont(new Font("Arial Black", Font.PLAIN, 18));
-		refreshButton.setBounds(621, 455, 115, 45);
+		refreshButton.setBounds(621, 515, 115, 45);
 
 		lobbyList = new JList<>();
 		roomList = new JList<>();
@@ -81,7 +86,7 @@ public class LobbyPanel extends JPanel {
 		FlowLayout flowLayout_1 = (FlowLayout) lobbyScrollHeader.getLayout();
 		flowLayout_1.setVgap(15);
 		JLabel label_1 = new JLabel("Lobby List");
-		label_1.setFont(new Font("Nueva Std", Font.PLAIN, 25));
+		label_1.setFont(new Font("Century", Font.BOLD, 25));
 		label_1.setForeground(new Color(255, 255, 255));
 		lobbyScrollHeader.add(label_1);
 		lobbyScrollHeader.setBackground(Color.GRAY);
@@ -95,7 +100,7 @@ public class LobbyPanel extends JPanel {
 		flowLayout.setVgap(15);
 		roomScrollHeader.setForeground(new Color(240, 255, 240));
 		JLabel label = new JLabel("Room List");
-		label.setFont(new Font("Nueva Std", Font.PLAIN, 25));
+		label.setFont(new Font("Century", Font.BOLD, 25));
 		label.setForeground(new Color(255, 255, 255));
 		roomScrollHeader.add(label);
 		roomScrollHeader.setBackground(new Color(112, 128, 144));
@@ -103,17 +108,18 @@ public class LobbyPanel extends JPanel {
 
 		JLabel lblScrabbleGame = new JLabel("Scrabble");
 		lblScrabbleGame.setForeground(new Color(112, 128, 144));
-		lblScrabbleGame.setFont(new Font("Nueva Std", Font.PLAIN, 40));
-		lblScrabbleGame.setBounds(576, 58, 160, 68);
+		lblScrabbleGame.setFont(new Font("Century Gothic", Font.BOLD | Font.ITALIC, 42));
+		lblScrabbleGame.setBounds(552, 58, 184, 68);
 
 		JLabel lblNewLabel = new JLabel("Game");
 		lblNewLabel.setForeground(new Color(112, 128, 144));
 		lblNewLabel.setBackground(new Color(112, 128, 144));
-		lblNewLabel.setFont(new Font("Nueva Std", Font.PLAIN, 40));
-		lblNewLabel.setBounds(631, 124, 105, 60);
+		lblNewLabel.setFont(new Font("Century Gothic", Font.BOLD | Font.ITALIC, 40));
+		lblNewLabel.setBounds(607, 124, 129, 60);
 
 		// Add component
 		add(startButton);
+		add(joinGameButton);
 		add(joinButton);
 		add(leaveButton);
 		add(inviteButton);
@@ -138,7 +144,21 @@ public class LobbyPanel extends JPanel {
 					jsonObject.put(Constants.USER_NAME,
 							ClientConnection.getInstance().getUserName());
 					jsonObject = JsonUtil.parse(Constants.START_GAME, jsonObject);
-					ClientConnection.getInstance().sendMsg(jsonObject.toString());
+					if (!ClientConnection.getInstance().sendMsg(jsonObject.toString())) {
+						MainFrame.getInstance().disconnect(this.getClass());
+					}
+				}
+			}
+		});
+
+		joinGameButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put(Constants.USER_NAME, ClientConnection.getInstance().getUserName());
+				jsonObject = JsonUtil.parse(Constants.JOIN_GAME, jsonObject);
+				if (!ClientConnection.getInstance().sendMsg(jsonObject.toString())) {
+					MainFrame.getInstance().disconnect(this.getClass());
 				}
 			}
 		});
@@ -153,7 +173,9 @@ public class LobbyPanel extends JPanel {
 					jsonObject.put(Constants.USER_NAME,
 							ClientConnection.getInstance().getUserName());
 					jsonObject = JsonUtil.parse(Constants.ADD_USER_TO_ROOM, jsonObject);
-					ClientConnection.getInstance().sendMsg(jsonObject.toString());
+					if (!ClientConnection.getInstance().sendMsg(jsonObject.toString())) {
+						MainFrame.getInstance().disconnect(this.getClass());
+					}
 				}
 			}
 		});
@@ -166,7 +188,9 @@ public class LobbyPanel extends JPanel {
 					jsonObject.put(Constants.USER_NAME,
 							ClientConnection.getInstance().getUserName());
 					jsonObject = JsonUtil.parse(Constants.REMOVE_USER_FROM_ROOM, jsonObject);
-					ClientConnection.getInstance().sendMsg(jsonObject.toString());
+					if (!ClientConnection.getInstance().sendMsg(jsonObject.toString())) {
+						MainFrame.getInstance().disconnect(this.getClass());
+					}
 				} else {
 					showMessageDialog(MainFrame.getInstance(), "You are not in the room");
 				}
@@ -184,7 +208,9 @@ public class LobbyPanel extends JPanel {
 					JSONObject jsonObject = new JSONObject();
 					jsonObject.put(Constants.USER_NAME, lobbyList.getSelectedValue());
 					jsonObject = JsonUtil.parse(Constants.INVITE, jsonObject);
-					ClientConnection.getInstance().sendMsg(jsonObject.toString());
+					if (!ClientConnection.getInstance().sendMsg(jsonObject.toString())) {
+						MainFrame.getInstance().disconnect(this.getClass());
+					}
 				}
 			}
 		});
@@ -194,7 +220,9 @@ public class LobbyPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				JSONObject jsonObject = new JSONObject();
 				jsonObject = JsonUtil.parse(Constants.REFRESH, jsonObject);
-				ClientConnection.getInstance().sendMsg(jsonObject.toString());
+				if (!ClientConnection.getInstance().sendMsg(jsonObject.toString())) {
+					MainFrame.getInstance().disconnect(this.getClass());
+				}
 			}
 		});
 	}
@@ -291,7 +319,9 @@ public class LobbyPanel extends JPanel {
 			jsonObject.put(Constants.IS_ACCEPTED, false);
 		}
 		jsonObject = JsonUtil.parse(Constants.INVITE_REPLY, jsonObject);
-		ClientConnection.getInstance().sendMsg(jsonObject.toString());
+		if (!ClientConnection.getInstance().sendMsg(jsonObject.toString())) {
+			MainFrame.getInstance().disconnect(this.getClass());
+		}
 	}
 
 	/**
@@ -306,5 +336,12 @@ public class LobbyPanel extends JPanel {
 	 */
 	public void gameStarted() {
 		showMessageDialog(MainFrame.getInstance(), "Game has already started");
+	}
+
+	/**
+	 * Pop up a window that show a reply message
+	 */
+	public void gameNotStarted() {
+		showMessageDialog(MainFrame.getInstance(), "Game hasn't started");
 	}
 }
