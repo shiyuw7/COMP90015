@@ -27,7 +27,7 @@ public class GameManager {
 	private int column;
 	private String value;
 	private String word;
-
+	
 	private GameManager() {
 		gameBoard = new GameBoard();
 		connectedClients = new ArrayList<>();
@@ -268,6 +268,7 @@ public class GameManager {
 				if (currentPlayer >= connectedClients.size()) {
 					currentPlayer = 0;
 				}
+				gameBoard.setValue(row, column, value);
 				for (int i = 0; i < connectedClients.size(); i++) {
 					jsonObject = new JSONObject();
 					jsonObject.put(Constants.NEXT_USER_NAME,
