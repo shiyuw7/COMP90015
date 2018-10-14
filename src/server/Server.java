@@ -6,6 +6,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
+	
 	private static int port;
 	private static ServerSocket serverSocket;
 
@@ -40,13 +41,13 @@ public class Server {
 		} catch (BindException e) {
 			System.out.println("Port " + port + " already in use (Bind failed)");
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println(e.toString());
 		} finally {
 			if (serverSocket != null) {
 				try {
 					serverSocket.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					System.out.println(e.toString());
 				}
 			}
 		}

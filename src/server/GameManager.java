@@ -6,27 +6,27 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import server.common.Constants;
-import server.common.GameBoard;
-import server.common.JsonUtil;
+import common.Constants;
+import common.GameBoard;
+import common.JsonUtil;
 
 public class GameManager {
 
 	private static GameManager instance;
-	private GameBoard gameBoard;
 	private List<ClientConnection> connectedClients;
-	private int currentPlayer;
+	private boolean status;
+
+	private GameBoard gameBoard;
 	private int passCount;
 	private int voteCount;
 	private int agreeCount;
 
-	private boolean status;
-
+	private int currentPlayer;
+	private String currentPlayerName;
 	private int row;
 	private int column;
 	private String value;
 	private String word;
-	private String currentPlayerName;
 
 	private GameManager() {
 		gameBoard = new GameBoard();
@@ -86,26 +86,6 @@ public class GameManager {
 		if (isEnd()) {
 			announceWinner();
 			clearGameStatus();
-		}
-	}
-
-	/**
-	 * Broadcast the message to one client
-	 */
-	public synchronized void broadcastToOne(String msg, String username) {
-		for (ClientConnection clientConnection : connectedClients) {
-			if (clientConnection.getClientName().equals(username)) {
-				clientConnection.write(msg);
-			}
-		}
-	}
-
-	/**
-	 * Broadcast the message to the given clients
-	 */
-	public synchronized void broadcastToList(String msg, List<ClientConnection> clients) {
-		for (ClientConnection clientConnection : clients) {
-			clientConnection.write(msg);
 		}
 	}
 
@@ -335,7 +315,7 @@ public class GameManager {
 	/**
 	 * Determine whether game is end or not
 	 */
-	public boolean isEnd() {
+	private boolean isEnd() {
 		if (isLastPlayer() || (passCount == connectedClients.size()) || gameBoard.boardFull()) {
 			return true;
 		}
@@ -345,7 +325,7 @@ public class GameManager {
 	/**
 	 * Determine whether the player is the last one or not
 	 */
-	public boolean isLastPlayer() {
+	private boolean isLastPlayer() {
 		if (connectedClients.size() <= 1) {
 			return true;
 		}
@@ -426,15 +406,7 @@ public class GameManager {
 		this.status = status;
 	}
 
-	public GameBoard getGameBoard() {
-		return gameBoard;
-	}
-
-	public int getCurrentPlayer() {
-		return currentPlayer;
-	}
-
-	public synchronized List<ClientConnection> getPlayers() {
+	public synchronized List<ClientConnection> getConnectedClients() {
 		return connectedClients;
 	}
 }

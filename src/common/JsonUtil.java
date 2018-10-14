@@ -1,10 +1,10 @@
-package server.common;
+package common;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import server.common.Constants;
+import common.Constants;
 
 public class JsonUtil {
 

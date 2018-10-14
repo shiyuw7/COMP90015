@@ -18,8 +18,8 @@ import javax.swing.JScrollPane;
 import org.json.JSONObject;
 
 import client.ClientConnection;
-import client.common.Constants;
-import client.common.JsonUtil;
+import common.Constants;
+import common.JsonUtil;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
@@ -307,7 +307,7 @@ public class LobbyPanel extends JPanel {
 	/**
 	 * Pop up a window to ask user whether accept others' invitation
 	 */
-	public void inviteConfirmation(String inviter) {
+	public void invite(String inviter) {
 		int dialogButton = JOptionPane.YES_NO_OPTION;
 		int dialogResult = JOptionPane.showConfirmDialog(MainFrame.getInstance(),
 				inviter + " invite you to join room?", "Invitation", dialogButton);

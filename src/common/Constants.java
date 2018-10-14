@@ -1,4 +1,4 @@
-package client.common;
+package common;
 
 public class Constants {
 
@@ -24,7 +24,6 @@ public class Constants {
 	public final static String REMOVE_USER_FROM_LOBBY = "removeUserFromLobby";
 	public final static String ADD_USER_TO_ROOM = "addUserToRoom";
 	public final static String REMOVE_USER_FROM_ROOM = "removeUserFromRoom";
-	public final static String ADD_USER_TO_GAME = "addUserToGame";
 	public final static String REMOVE_USER_FROM_GAME = "removeUserFromGame";
 	public final static String INVITE = "invite";
 	public final static String INVITE_REPLY = "inviteReply";
@@ -42,9 +41,8 @@ public class Constants {
 	public final static String LOGOUT = "logout";
 	public final static String GAME_OVER = "gameOver";
 	public final static String VOTE_REPLY = "voteReply";
-	// ...
 
-	/* ************************* Data Type *********************************/
+	/* ************************* Data Type ************************************/
 
 	// JsonArray data type
 	public final static String LOBBY_LIST = "lobbyList";
@@ -71,6 +69,4 @@ public class Constants {
 	public final static String IS_YOUR_ROUND = "isYourRound";
 	public final static String IS_WORD = "isWord";
 	public final static String IS_TIE = "isTie";
-	// ...
-
 }

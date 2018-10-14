@@ -15,7 +15,7 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputAdapter;
 
-import client.common.GameBoard;
+import common.GameBoard;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
@@ -32,6 +32,9 @@ public class BoardPanel extends JPanel {
 	private int previousColumn;
 	private int previousRow;
 	private String previousValue;
+	
+	private int highlightColumn;
+	private int highlightRow;
 
 	public BoardPanel() {
 		this.setPreferredSize(new Dimension(MainFrame.getInstance().getHeight() - 40,
@@ -42,6 +45,8 @@ public class BoardPanel extends JPanel {
 		this.height = 0;
 		this.currentColumn = -1;
 		this.currentRow = -1;
+		this.highlightColumn = -1;
+		this.highlightRow = -1;
 		this.fontSize = 18;
 	}
 
@@ -54,6 +59,8 @@ public class BoardPanel extends JPanel {
 		this.height = 0;
 		this.currentColumn = -1;
 		this.currentRow = -1;
+		this.highlightColumn = -1;
+		this.highlightRow = -1;
 		this.fontSize = 18;
 	}
 
@@ -102,37 +109,19 @@ public class BoardPanel extends JPanel {
 			g2d.fillRect(currentColumn * slotWidth, currentRow * slotHeight, slotWidth,
 					slotHeight);
 		}
-	}
-
-	/**
-	 * Place a character into tile based on selected value in JComboBox
-	 */
-	public boolean placeCharacter(String value) {
-		if (gameBoard.placeCharacter(currentRow, currentColumn, value)) {
-			this.previousColumn = currentColumn;
-			this.previousRow = currentRow;
-			this.previousValue = value;
-			repaint();
-			MainFrame.getInstance().generateButton(gameBoard.getWord(currentRow, currentColumn));
-			return false;
+		if (highlightColumn != -1 && highlightRow != -1) {
+			g2d.setColor(new Color(0.0f, 0.0f, 1.0f, 0.6f));
+			g2d.fillRect(highlightColumn * slotWidth, highlightRow * slotHeight, slotWidth,
+					slotHeight);
 		}
-		return true;
 	}
 
-	/**
-	 * Clear current character
-	 */
-	public void clearCharacter() {
-		gameBoard.clearValue(previousRow, previousColumn);
-		repaint();
-	}
-	
 	public class ComboBoxActionListener implements ActionListener {
 		@SuppressWarnings("unchecked")
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JComboBox<String> jComboBox = (JComboBox<String>) e.getSource();
-			if (placeCharacter((String) jComboBox.getSelectedItem())) {
+			if (placeNewValue((String) jComboBox.getSelectedItem())) {
 				showMessageDialog(MainFrame.getInstance(), "Tile invalid");
 			}
 		}
@@ -152,17 +141,38 @@ public class BoardPanel extends JPanel {
 	}
 
 	/**
-	 * Get value from current tile
+	 * Place a character into tile based on selected value in JComboBox
 	 */
-	public String getCurrentValue() {
-		return gameBoard.getValue(currentRow, currentColumn);
+	public boolean placeNewValue(String value) {
+		if (gameBoard.placeCharacter(currentRow, currentColumn, value)) {
+			this.previousColumn = currentColumn;
+			this.previousRow = currentRow;
+			this.previousValue = value;
+			repaint();
+			MainFrame.getInstance().generateButton(gameBoard.getWord(currentRow, currentColumn));
+			return false;
+		}
+		return true;
 	}
 
 	/**
-	 * Get value from a specific tile
+	 * Clear current character
 	 */
-	public String getValue(int row, int col) {
-		return gameBoard.getValue(row, col);
+	public void clearPreviousValue() {
+		gameBoard.clearValue(previousRow, previousColumn);
+		repaint();
+	}
+
+	public void highlightOn(int row, int column) {
+		this.highlightColumn = column;
+		this.highlightRow = row;
+		repaint();
+	}
+
+	public void highlightOff() {
+		this.highlightColumn = -1;
+		this.highlightRow = -1;
+		repaint();
 	}
 
 	/**
@@ -173,27 +183,23 @@ public class BoardPanel extends JPanel {
 		repaint();
 	}
 
-	public GameBoard getGameBoard() {
-		return gameBoard;
+	public int getCurrentRow() {
+		return currentRow;
 	}
 
 	public int getCurrentColumn() {
 		return currentColumn;
 	}
 
-	public int getCurrentRow() {
-		return currentRow;
-	}
-
-	public String getPreviousValue() {
-		return previousValue;
+	public int getPreviousRow() {
+		return previousRow;
 	}
 
 	public int getPreviousColumn() {
 		return previousColumn;
 	}
 
-	public int getPreviousRow() {
-		return previousRow;
+	public String getPreviousValue() {
+		return previousValue;
 	}
 }

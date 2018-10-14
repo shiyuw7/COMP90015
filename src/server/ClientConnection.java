@@ -11,8 +11,8 @@ import java.net.SocketException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import server.common.Constants;
-import server.common.JsonUtil;
+import common.Constants;
+import common.JsonUtil;
 
 public class ClientConnection extends Thread {
 
@@ -39,7 +39,7 @@ public class ClientConnection extends Thread {
 			this.writer = new BufferedWriter(
 					new OutputStreamWriter(clientSocket.getOutputStream(), "UTF-8"));
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println(e.toString());
 		}
 	}
 
@@ -158,6 +158,14 @@ public class ClientConnection extends Thread {
 				case Constants.JOIN_GAME:
 					if (GameManager.getInstance().getStatus()) {
 						GameManager.getInstance().clientJoined(this);
+						if (clientStatus == 1) {
+							LobbyManager.getInstance().clientDisconnected(this);
+						} else if (clientStatus == 2) {
+							LobbyManager.getInstance().clientDisconnected(this);
+							RoomManager.getInstance().clientDisconnected(this);
+						}
+						this.setClientStatus(3);
+						this.setClientCount(0);
 					} else {
 						// if game hasn't started
 						jsonObject.put(Constants.IS_STARTED, false);
@@ -188,14 +196,32 @@ public class ClientConnection extends Thread {
 			System.out.println(
 					Thread.currentThread().getName() + " - Client " + clientNum + " disconnected");
 		} catch (JSONException e) {
-			e.printStackTrace();
+			System.out.println(e.toString());
 		} catch (SocketException e) {
 			ClientManager.getInstance().clientDisconnected(this);
-			e.printStackTrace();
+			System.out.println(e.toString());
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println(e.toString());
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println(e.toString());
+		}
+	}
+
+	public void count(int count) {
+		this.clientCount = this.clientCount + count;
+	}
+
+	/**
+	 * Write message to client from server
+	 */
+	public void write(String msg) {
+		try {
+			writer.write(msg + "\n");
+			writer.flush();
+			System.out.println(
+					Thread.currentThread().getName() + " - Message sent to client " + clientNum);
+		} catch (IOException e) {
+			System.out.println(e.toString());
 		}
 	}
 
@@ -217,23 +243,5 @@ public class ClientConnection extends Thread {
 
 	public void setClientCount(int clientCount) {
 		this.clientCount = clientCount;
-	}
-
-	public void count(int count) {
-		this.clientCount = this.clientCount + count;
-	}
-
-	/**
-	 * Write message to client from server
-	 */
-	public void write(String msg) {
-		try {
-			writer.write(msg + "\n");
-			writer.flush();
-			System.out.println(
-					Thread.currentThread().getName() + " - Message sent to client " + clientNum);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 }

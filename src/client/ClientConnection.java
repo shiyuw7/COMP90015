@@ -12,7 +12,6 @@ public class ClientConnection {
 	private static ClientConnection instance;
 	private Socket client;
 	private BufferedWriter writer;
-
 	private String userName;
 
 	private ClientConnection() {
@@ -31,26 +30,10 @@ public class ClientConnection {
 			this.writer = new BufferedWriter(
 					new OutputStreamWriter(client.getOutputStream(), "UTF-8"));
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			System.out.println(e.toString());
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println(e.toString());
 		}
-	}
-
-	public Socket getClient() {
-		return client;
-	}
-
-	public BufferedWriter getWriter() {
-		return writer;
-	}
-
-	public String getUserName() {
-		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
 	}
 
 	/**
@@ -63,13 +46,21 @@ public class ClientConnection {
 				writer.flush();
 				return true;
 			} catch (SocketException e) {
-				e.printStackTrace();
+				System.out.println(e.toString());
 				return false;
 			} catch (Exception e) {
-				e.printStackTrace();
+				System.out.println(e.toString());
 				return false;
 			}
 		}
 		return false;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 }

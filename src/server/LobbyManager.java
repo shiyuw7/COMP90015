@@ -6,8 +6,8 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import server.common.Constants;
-import server.common.JsonUtil;
+import common.Constants;
+import common.JsonUtil;
 
 public class LobbyManager {
 
@@ -51,15 +51,6 @@ public class LobbyManager {
 			if (clientConnection.getClientName().equals(username)) {
 				clientConnection.write(msg);
 			}
-		}
-	}
-
-	/**
-	 * Broadcast the message to the given clients
-	 */
-	public synchronized void broadcastToList(String msg, List<ClientConnection> clients) {
-		for (ClientConnection clientConnection : clients) {
-			clientConnection.write(msg);
 		}
 	}
 
@@ -124,5 +115,4 @@ public class LobbyManager {
 	public synchronized List<ClientConnection> getConnectedClients() {
 		return connectedClients;
 	}
-
 }

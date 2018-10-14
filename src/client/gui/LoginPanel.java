@@ -14,8 +14,8 @@ import javax.swing.JTextField;
 import org.json.JSONObject;
 
 import client.ClientConnection;
-import client.common.Constants;
-import client.common.JsonUtil;
+import common.Constants;
+import common.JsonUtil;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
@@ -83,7 +83,7 @@ public class LoginPanel extends JPanel {
 	/**
 	 * check the format of user name
 	 */
-	public boolean isValidUsername(String username) {
+	private boolean isValidUsername(String username) {
 		for (int i = 0; i < username.length(); i++) {
 			if ((Character.isDigit(username.charAt(i))
 					|| Character.isLetter(username.charAt(i))) == false)

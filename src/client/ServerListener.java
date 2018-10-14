@@ -13,8 +13,8 @@ import org.json.JSONObject;
 
 import client.gui.GamePanel;
 import client.gui.MainFrame;
-import client.common.Constants;
-import client.common.JsonUtil;
+import common.Constants;
+import common.JsonUtil;
 
 public class ServerListener extends Thread {
 
@@ -28,9 +28,9 @@ public class ServerListener extends Thread {
 			this.reader = new BufferedReader(
 					new InputStreamReader(client.getInputStream(), "UTF-8"));
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			System.out.println(e.toString());
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println(e.toString());
 		}
 	}
 
@@ -70,18 +70,15 @@ public class ServerListener extends Thread {
 						MainFrame.getInstance().getLobbyPanel()
 								.removeFromRoomList(data.getString(Constants.USER_NAME));
 						break;
-					case Constants.ADD_USER_TO_GAME:
-						// Join a game
-						break;
 					case Constants.REMOVE_USER_FROM_GAME:
-						gamePanel.removePlayerFromTable(data.getString(Constants.USER_NAME));
+						gamePanel.removeFromCountTable(data.getString(Constants.USER_NAME));
 						break;
 					case Constants.REFRESH:
 						refreshLobby(data);
 						break;
 					case Constants.INVITE:
 						MainFrame.getInstance().getLobbyPanel()
-								.inviteConfirmation(data.getString(Constants.USER_NAME));
+								.invite(data.getString(Constants.USER_NAME));
 						break;
 					case Constants.INVITE_REPLY:
 						MainFrame.getInstance().getLobbyPanel()
@@ -130,21 +127,13 @@ public class ServerListener extends Thread {
 						MainFrame.getInstance().getLobbyPanel().clearRoom();
 						break;
 					case Constants.VOTE:
-						// Can change to highlight
 						gamePanel.getBoardPanel().setValue(data.getInt(Constants.PLACE_ROW),
 								data.getInt(Constants.PLACE_COLUMN),
 								data.getString(Constants.PLACE_VALUE));
-
-						gamePanel.generateVoteDialog(data);
+						gamePanel.vote(data);
 						break;
 					case Constants.VOTE_REPLY:
 						if (!data.getBoolean(Constants.IS_WORD)) {
-							// if(data.getString(Constants.USER_NAME).equals(ClientConnection.getInstance().getUserName()))
-							// {
-							// gamePanel.getBoardPanel().clearCharacter();
-							// gamePanel.revalidate();
-							// gamePanel.repaint();
-							// }
 							MainFrame.getInstance()
 									.showVoteReply(data.getString(Constants.USER_NAME));
 						}
@@ -182,9 +171,9 @@ public class ServerListener extends Thread {
 					}
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.out.println(e.toString());
 			} catch (Exception e) {
-				e.printStackTrace();
+				System.out.println(e.toString());
 			}
 		}
 	}
@@ -203,9 +192,5 @@ public class ServerListener extends Thread {
 		s1.removeAll(s2);
 		String[] notInRoomArray = s1.toArray(new String[s1.size()]);
 		MainFrame.getInstance().getLobbyPanel().refreshLobbyList(notInRoomArray);
-	}
-
-	public Socket getClient() {
-		return client;
 	}
 }

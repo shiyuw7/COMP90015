@@ -4,7 +4,7 @@ import java.awt.Dimension;
 
 import javax.swing.JPanel;
 
-import client.common.Constants;
+import common.Constants;
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.JTextField;
@@ -42,7 +42,7 @@ public class ConnectPanel extends JPanel {
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	public void initialize() {
+	private void initialize() {
 		setPreferredSize(new Dimension(Constants.WIDTH, Constants.HEIGHT));
 		setLayout(null);
 		setBackground(new Color(255, 255, 255));

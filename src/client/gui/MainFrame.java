@@ -16,9 +16,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import client.ClientConnection;
-import client.common.Constants;
-import client.common.GameBoard;
-import client.common.JsonUtil;
+import common.Constants;
+import common.GameBoard;
+import common.JsonUtil;
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {

@@ -6,8 +6,8 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import server.common.Constants;
-import server.common.JsonUtil;
+import common.Constants;
+import common.JsonUtil;
 
 public class RoomManager {
 
@@ -44,26 +44,6 @@ public class RoomManager {
 	}
 
 	/**
-	 * Broadcast the message to one client
-	 */
-	public synchronized void broadcastToOne(String msg, String username) {
-		for (ClientConnection clientConnection : connectedClients) {
-			if (clientConnection.getClientName().equals(username)) {
-				clientConnection.write(msg);
-			}
-		}
-	}
-
-	/**
-	 * Broadcast the message to the given clients
-	 */
-	public synchronized void broadcastToList(String msg, List<ClientConnection> clients) {
-		for (ClientConnection clientConnection : clients) {
-			clientConnection.write(msg);
-		}
-	}
-
-	/**
 	 * Broadcast the message to all the clients
 	 */
 	public synchronized void broadcastToAll(String msg) {
@@ -93,5 +73,4 @@ public class RoomManager {
 	public synchronized List<ClientConnection> getConnectedClients() {
 		return connectedClients;
 	}
-
 }

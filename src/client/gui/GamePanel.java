@@ -23,9 +23,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import client.ClientConnection;
-import client.common.Constants;
-import client.common.GameBoard;
-import client.common.JsonUtil;
+import common.Constants;
+import common.GameBoard;
+import common.JsonUtil;
 
 @SuppressWarnings("serial")
 public class GamePanel extends JPanel {
@@ -160,7 +160,6 @@ public class GamePanel extends JPanel {
 			if (!ClientConnection.getInstance().sendMsg(jsonObject.toString())) {
 				MainFrame.getInstance().disconnect(this.getClass());
 			}
-			;
 		}
 	}
 
@@ -170,7 +169,7 @@ public class GamePanel extends JPanel {
 	public class CancelButtonActionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			boardPanel.clearCharacter();
+			boardPanel.clearPreviousValue();
 			comboBox.setEnabled(true);
 			passButton.setEnabled(true);
 			// Remove all confirm buttons
@@ -258,7 +257,7 @@ public class GamePanel extends JPanel {
 	/**
 	 * Remove player from Count Table
 	 */
-	public void removePlayerFromTable(String username) {
+	public void removeFromCountTable(String username) {
 		for (int i = 0; i < countTableModel.getRowCount(); i++) {
 			if (countTableModel.getValueAt(i, 0).equals(username)) {
 				countTableModel.removeRow(i);
@@ -269,9 +268,10 @@ public class GamePanel extends JPanel {
 	/**
 	 * Generate vote button
 	 */
-	public void generateVoteDialog(JSONObject data) {
+	public void vote(JSONObject data) {
 		// Highlight
-
+		MainFrame.getInstance().getGamePanel().getBoardPanel().highlightOn(
+				data.getInt(Constants.PLACE_ROW), data.getInt(Constants.PLACE_COLUMN));
 		String[] options = new String[2];
 		options[0] = new String("Agree");
 		options[1] = new String("Disagree");
@@ -288,10 +288,11 @@ public class GamePanel extends JPanel {
 			jsonObject.put(Constants.IS_WORD, false);
 		}
 		jsonObject = JsonUtil.parse(Constants.VOTE_REPLY, jsonObject);
-		if (!ClientConnection.getInstance().sendMsg(jsonObject.toString())) {
+		if (ClientConnection.getInstance().sendMsg(jsonObject.toString())) {
+			MainFrame.getInstance().getGamePanel().getBoardPanel().highlightOff();
+		} else {
 			MainFrame.getInstance().disconnect(this.getClass());
 		}
-		// Cancel Highlight
 	}
 
 	/**
@@ -325,10 +326,6 @@ public class GamePanel extends JPanel {
 
 	public JButton getPassButton() {
 		return passButton;
-	}
-
-	public JTable getCountTable() {
-		return countTable;
 	}
 
 	public void setCurrentPlayer(String currentPlayer) {
